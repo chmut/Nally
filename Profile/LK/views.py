@@ -35,6 +35,7 @@ def profile(request):
     return render(request, 'lk/profile.html', {"form": form, "cert": cert, "filial": filial})
 
 
+@login_required
 def news(request):
     group = Group.objects.filter(name=request.user.group)
     filial = Filial.objects.filter(title=group[0].filial)
@@ -47,11 +48,13 @@ def news(request):
     return render(request, template_name='lk/news.html', context=context)
 
 
+@login_required
 def view_news(request, news_id):
     news_item = get_object_or_404(News, pk=news_id)
     return render(request, 'lk/view_news.html', {"item": news_item})
 
 
+@login_required
 def orders(request):
     ord = Orders.objects.filter(client_id=request.user)
     context = {
@@ -61,6 +64,7 @@ def orders(request):
     return render(request, 'lk/orders.html', context)
 
 
+@login_required
 def create_order(request):
     error=''
     form1 = UserOrders()
