@@ -1,0 +1,82 @@
+{%load static%}
+<body class="hold-transition skin-blue sidebar-mini" style="height: auto; min-height:100%;">
+<style>
+  .main-sidebar{
+  background-attachment:fixed;
+  background-size:0 100%;
+  }
+</style>
+<div class="wrapped boxed-wrapper" style="height: auto; min-height:100%;">
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="{%url 'profile'%}" class="logo blue-bg">
+    <!-- mini logo for sidebar mini 50x50 pixels -->
+    <span class="logo-mini"><img src="{{MEDIA_URL}}/logo/logo_mini.png" alt="" style="height:50px;width:50px"></span>
+    <!-- logo for regular state and mobile devices -->
+    <!--<span class="logo-lg"><img src="https://sun9-68.userapi.com/impg/iSkLqH8UJIa1ePW8z30Yip_TzlSmfqpHSmG13w/ll13fNmj8Tc.jpg?size=1010x416&quality=96&sign=0aabf30bc0683970ccc33103e2047a11&type=album" alt="" style="height:55px;width:200px"></span> </a>-->
+    <span class="logo-lg"><img src="{{MEDIA_URL}}/logo/logo.png" alt="" style="height:60px;width:170px"></span> </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar blue-bg navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <ul class="nav navbar-nav pull-left">
+        <li><a class="sidebar-toggle" data-toggle="push-menu" href=""></a> </li>
+      </ul>
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+
+          <!-- Notifications: style can be found in dropdown.less -->
+
+          <!-- User Account: style can be found in dropdown.less -->
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <div class="sidebar">
+      <!-- Sidebar user panel -->
+      <div class="user-panel">
+       <div class="image text-center">
+         {%if user.avatar %}
+              <img class="img-circle" src="{{user.avatar.url}}" alt="User profile picture">
+              {%else%}
+              <img class="img-circle" src="https://shvsm-penza.ru/wp-content/uploads/2020/11/maxresdefault-1.jpg" alt="User profile picture">
+              {%endif%}
+
+       </div>
+        <div class="info">
+          {%if user.is_authenticated%}
+          <p>{{user.first_name}}</p>
+          {%endif%}
+          </div>
+      </div>
+
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li> <a href="{%url 'profile'%}"> <i class="fa fa-user-o"></i> <span>Профиль</span></a></li>
+        {%comment%}
+        <li> <a href="#"> <i class="fa fa-bullseye"></i> <span>Посещаемость</span> </a></li>
+        {%endcomment%}
+        <li class="treeview"> <a href="#"> <i class="fa fa-envelope-o "></i> <span>Заказы</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right">
+          </i>
+        </span>
+        </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="{%url 'orders'%}">Список заказов</a>
+            </li>
+            <li>
+              <a href="{%url 'create_order'%}">Сделать заказ</a>
+            </li>
+          </ul>
+        </li>
+        <li> <a href="{%url 'news'%}"> <i class="fa fa-briefcase"></i> <span>Новости</span> </a></li>
+        <li> <a href="{%url 'logout'%}"> <i class="fa fa-sign-out"></i> <span>Выйти</span> </a></li>
+      </ul>
+    </div>
+    <!-- /.sidebar -->
+  </aside>

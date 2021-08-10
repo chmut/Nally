@@ -1,0 +1,104 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Регистрация</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
+
+<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+<!-- v4.0.0-alpha.6 -->
+<link rel="stylesheet" href="{%static 'bootstrap/css/bootstrap.min.css'%}">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+
+<!-- Theme style -->
+<link rel="stylesheet" href="{%static 'css/style.css'%}">
+<link rel="stylesheet" href="{%static 'css/font-awesome/css/font-awesome.min.css'%}">
+<link rel="stylesheet" href="{%static 'css/et-line-font/et-line-font.css'%}">
+<link rel="stylesheet" href="{%static 'css/themify-icons/themify-icons.css'%}">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-box-body">
+    <h3 class="login-box-msg">Регистрация</h3>
+    <form method="post">
+        {%csrf_token%}
+      <div class="form-group has-feedback">
+        {{form.username}}
+        {{form.username.errors}}
+      </div>
+      <div class="form-group has-feedback">
+        {{form.email}}
+        {{form.email.errors}}
+      </div>
+      <div class="form-group has-feedback">
+        {{form.first_name}}
+        {{form.first_name.errors}}
+      </div>
+      <div class="form-group has-feedback">
+        {{form.last_name}}
+        {{form.last_name.errors}}
+      </div>
+      <div class="form-group has-feedback">
+        {{form.bd}}
+        {{form.bd.errors}}
+      </div>
+      <div class="form-group has-feedback">
+        {{form.first_name_m}}
+        {{form.first_name_m.errors}}
+      </div>
+      <div class="form-group has-feedback">
+        {{form.last_name_m}}
+        {{form.last_name_m.errors}}
+      </div>
+      <div class="form-group has-feedback">
+        {{form.phone}}
+        {{form.phone.errors}}
+      </div>
+      <div class="form-group has-feedback">
+        {{form.password1}}
+        {{form.password1.errors}}
+      </div>
+      <div class="form-group has-feedback">
+        {{form.password2}}
+        {{form.password2.errors}}
+      </div>
+      <div>
+        <!-- /.col -->
+        <div class="col-xs-4 m-t-1">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">Зарегистрироваться</button>
+        </div>
+        <!-- /.col -->
+      </div>
+    </form>
+    <div class="m-t-2">Уже есть аккаунт? <a href="{%url 'login'%}" class="text-center">Авторизуйтесь</a></div>
+  </div>
+  <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery 3 -->
+<script src="{%static 'js/jquery.min.js'%}"></script>
+
+<!-- v4.0.0-alpha.6 -->
+<script src="{%static 'bootstrap/js/bootstrap.min.js'%}"></script>
+
+<!-- template -->
+<script src="{%static 'js/niche.js'%}"></script>
+</body>
+</html>

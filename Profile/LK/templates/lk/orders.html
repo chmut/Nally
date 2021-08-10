@@ -1,0 +1,38 @@
+{%extends 'base.html'%}
+{%block title%}
+Заказы
+{%endblock%}
+{%block content%}
+<div class="content-wrapper">
+    <div class="content-header sty-one">
+      <h1 class="text-black">Заказы</h1>
+    </div>
+<div class="content">
+      <div class="info-box">
+        <h4 class="text-black">Ваши заказы</h4>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Наименование</th>
+                <th scope="col">Размер</th>
+                <th scope="col">Цвет</th>
+                <th scope="col">Статус</th>
+              </tr>
+            </thead>
+            <tbody>
+            {%for order in ord%}
+              <tr>
+                <td>{{order.name}}</td>
+                <td>{{order.size}}</td>
+                <td>{{order.color}}</td>
+                <td>{{order.status}}</td>
+              </tr>
+            {%endfor%}
+            </tbody>
+          </table>
+        </div>
+      </div>
+</div>
+</div>
+    {%endblock%}

@@ -1,0 +1,235 @@
+{%extends 'base.html'%}
+{%block title%}
+Сделать заказ
+{%endblock%}
+{%block content%}
+
+<div class="content-wrapper">
+    <div class="content-header sty-one">
+      <h1 class="text-black">Заказы</h1>
+    </div>
+<div class="content">
+    <div class="row row-flex justify-content-center">
+        <div class="col-sm-4">
+
+    <form method="post" id="formOne">
+        {%csrf_token%}
+        <input type="hidden" name="form_type" value="formOne">
+    <div class="card h-100 text-center my-3 ">
+  <img src="https://sun9-52.userapi.com/impf/c848520/v848520040/17191f/3LV0LHf1nlo.jpg?size=520x0&quality=95&sign=830e4265e208a15bbb701bba23820900" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h4 class="card-title">Добок</h4>
+    <div class="form-group">
+    <label>Размер</label>
+    {%for field in form1%}
+        {%if field.name == "size" %}
+        <select id="id_size" class="form-control form-control-lg" name="size">
+            {%for select in field%}
+                {%if select.choice_label != "XXS" and select.choice_label != 'XS' and select.choice_label != 'S' and select.choice_label != 'M' and select.choice_label != 'L' and select.choice_label != 'XL'%}
+                   <option value="{{select.choice_label}}">{{select.choice_label}}</option>
+                {%endif%}
+            {%endfor%}
+            </select>
+        {%endif%}
+    {%endfor%}
+
+
+
+</div>
+<hr>
+
+    <input type="submit" class="btn btn-success" value="Заказать">
+  </div>
+    </div>
+    </form>
+        </div>
+        <div class="col-sm-4">
+    <form method="post" id="formSix">
+        {%csrf_token%}
+        <input type="hidden" name="form_type" value="formSix">
+    <div class="card text-center my-3">
+  <img src="https://sun9-20.userapi.com/impf/c851228/v851228987/1000f8/6frltBs5ifk.jpg?size=520x0&quality=95&sign=706636c4680e913a100a8f6828e3d5b5" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h4 class="card-title">Книга</h4>
+<hr>
+
+    <input type="submit" class="btn btn-success" value="Заказать">
+  </div>
+</div>
+    </form>
+            </div>
+
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-sm-4">
+    <form method="post" id="formThree">
+        {%csrf_token%}
+        <input type="hidden" name="form_type" value="formThree">
+    <div class="card text-center my-3">
+  <img src="https://sun9-84.userapi.com/impf/c845421/v845421594/1ef3b4/dVMvoxeOqEk.jpg?size=520x0&quality=95&sign=d8497358d627877ed14f88ffd4b3e0f7" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h4 class="card-title">Перчатки</h4>
+    <div class="form-group">
+    <label>Размер</label>
+    {%for field in form3%}
+        {%if field.name == "size" %}
+        <select id="id_size" class="form-control form-control-lg" name="size">
+            {%for select in field%}
+                {%if select.choice_label == 'XXS' or select.choice_label == 'XS' or select.choice_label == 'S' or select.choice_label == 'M' or select.choice_label == 'L' or select.choice_label == 'XL'%}
+                   <option value="{{select.choice_label}}">{{select.choice_label}}</option>
+                {%endif%}
+            {%endfor%}
+            </select>
+        {%endif%}
+    {%endfor%}
+    </div>
+      <div><label>Цвет</label></div>
+
+      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    {%for field in form3%}
+      {% if field.name == "color" %}
+
+        {%for radio in field%}
+        {%if radio.choice_label == 'Синий' or radio.choice_label == 'Красный'%}
+  <label for="{{radio.id_for_label}}" class="btn btn-lg {%cycle 'btn-primary' 'btn-danger'%}">
+      {{radio}}
+  </label>
+          {%endif%}
+            {%endfor%}
+    {%endif%}
+    {%endfor%}
+</div>
+<hr>
+
+    <input type="submit" class="btn btn-success" value="Заказать">
+  </div>
+</div>
+    </form>
+        </div>
+        <div class="col-sm-4">
+    <form method="post" id="formFour">
+        {%csrf_token%}
+        <input type="hidden" name="form_type" value="formFour">
+    <div class="card text-center my-3" >
+  <img src="https://sun9-15.userapi.com/impf/c845021/v845021594/1f533c/aBHbqIuwpIw.jpg?size=520x0&quality=95&sign=4c2d57c3c93f987162e1d9e2d4c117c2" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h4 class="card-title">Шлем</h4>
+    <div class="form-group">
+    <label>Размер</label>
+    {%for field in form4%}
+        {%if field.name == "size" %}
+        <select id="id_size" class="form-control form-control-lg" name="size">
+            {%for select in field%}
+                {%if select.choice_label == 'XXS' or select.choice_label == 'XS' or select.choice_label == 'S' or select.choice_label == 'M' or select.choice_label == 'L' or select.choice_label == 'XL'%}
+                   <option value="{{select.choice_label}}">{{select.choice_label}}</option>
+                {%endif%}
+            {%endfor%}
+            </select>
+        {%endif%}
+    {%endfor%}
+    </div>
+    <div><label>Цвет</label></div>
+      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    {%for field in form4%}
+      {% if field.name == "color" %}
+
+        {%for radio in field%}
+        {%if radio.choice_label == 'Синий' or radio.choice_label == 'Красный'%}
+  <label for="{{radio.id_for_label}}" class="btn btn-lg {%cycle 'btn-primary' 'btn-danger'%}">
+      {{radio}}
+  </label>
+          {%endif%}
+            {%endfor%}
+    {%endif%}
+    {%endfor%}
+</div>
+<hr>
+
+    <input type="submit" class="btn btn-success" value="Заказать">
+  </div>
+</div>
+    </form>
+            </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-sm-4">
+    <form method="post" id="formTwo">
+        {%csrf_token%}
+        <input type="hidden" name="form_type" value="formTwo">
+    <div class="card h-100 text-center my-3" >
+  <img src="https://sun9-57.userapi.com/impf/c853624/v853624422/25845/Eh-21zTGbm4.jpg?size=520x0&quality=95&sign=740e6dcad324b7ccbf48b956ee93a1ac" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h4 class="card-title">Футы</h4>
+    <div class="form-group">
+    <label>Размер</label>
+    {%for field in form2%}
+        {%if field.name == "size" %}
+        <select id="id_size" class="form-control form-control-lg" name="size">
+            {%for select in field%}
+                {%if select.choice_label == 'XXS' or select.choice_label == 'XS' or select.choice_label == 'S' or select.choice_label == 'M' or select.choice_label == 'L' or select.choice_label == 'XL'%}
+                   <option value="{{select.choice_label}}">{{select.choice_label}}</option>
+                {%endif%}
+            {%endfor%}
+            </select>
+        {%endif%}
+    {%endfor%}
+    </div>
+    <div><label>Цвет</label></div>
+      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    {%for field in form2%}
+      {% if field.name == "color" %}
+
+        {%for radio in field%}
+        {%if radio.choice_label == 'Синий' or radio.choice_label == 'Красный'%}
+  <label for="{{radio.id_for_label}}" class="btn btn-lg {%cycle 'btn-primary' 'btn-danger'%}">
+      {{radio}}
+  </label>
+          {%endif%}
+            {%endfor%}
+    {%endif%}
+    {%endfor%}
+</div>
+<hr>
+
+    <input type="submit" class="btn btn-success" value="Заказать">
+  </div>
+</div>
+    </form>
+        </div>
+        <div class="col-sm-4">
+    <form method="post" id="formFive">
+        {%csrf_token%}
+        <input type="hidden" name="form_type" value="formFive">
+    <div class="card h-100 text-center my-3">
+  <img src="https://sun9-28.userapi.com/impf/c849032/v849032040/1736b3/OFx-w56Ff8A.jpg?size=520x0&quality=95&sign=890b06f43e7ac676c499dd0e0caba926" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h4 class="card-title">Пояс</h4>
+    <div><label>Цвет</label></div>
+      <div data-toggle="buttons">
+    {%for field in form5%}
+      {% if field.name == "color" %}
+
+        {%for radio in field%}
+          {%if radio.choice_label == 'Белый' or radio.choice_label == 'Желтый' or radio.choice_label == 'Зеленый' or radio.choice_label == 'Синий' or radio.choice_label == 'Красный' or radio.choice_label == 'Черный'%}
+  <label for="{{radio.id_for_label}}" class="btn btn-lg {%cycle 'btn-light' 'btn-warning'  'btn-success' 'btn-primary' 'btn-danger' 'btn-dark'%}">
+      {{radio}}
+  </label>
+          {%endif%}
+            {%endfor%}
+    {%endif%}
+    {%endfor%}
+</div>
+<hr>
+
+    <input type="submit" class="btn btn-success" value="Заказать">
+  </div>
+</div>
+    </form>
+        </div>
+
+        </div>
+</div>
+
+
+</div>
+    {%endblock%}

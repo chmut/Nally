@@ -1,0 +1,31 @@
+{%extends 'base.html'%}
+{%block title%}
+{{item.title}}
+{%endblock%}
+{%block content%}
+<div class="content">
+<div class="content-wrapper">
+    <div class="content-header sty-one">
+      <h1 class="text-black">{{item.title}}</h1>
+    </div>
+<div class="row justify-content-center">
+<div class="col sm-10">
+    <div class="card">
+        <div class="text-center">
+        {%if item.photo%}
+        <img src="{{item.photo.url}}" class="card-img-top">
+        {%else%}
+        <img src="https://shvsm-penza.ru/wp-content/uploads/2020/11/maxresdefault-1.jpg" class="card-img-top" alt="..."
+        style="max-height:80%; max-width:100%;">
+        {%endif%}
+        </div>
+        <div class="card-body">
+            <p class="card-text">{{item.content}}</p>
+            <p class="card-text"><small class="text-muted">{{item.updated_at}}</small></p>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+{%endblock%}

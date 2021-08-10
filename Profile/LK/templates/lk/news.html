@@ -1,0 +1,37 @@
+{%extends 'base.html'%}
+{%block title%}Новости{%endblock%}
+{%block content%}
+
+<div class="content-wrapper">
+    <div class="content-header sty-one">
+      <h1 class="text-black">Новости</h1>
+    </div>
+<div class="content">
+    <div class="row justify-content-center">
+        <div class="col-sm-10">
+            {%for item in news%}
+
+            <div class="card text-center mb-5" >
+                <div >
+                {%if item.photo%}
+                <img src="{{item.photo.url}}" class="card-img-top my-5">
+                {%else%}
+                <img src="https://shvsm-penza.ru/wp-content/uploads/2020/11/maxresdefault-1.jpg" class="card-img-top"
+                     alt="..." style="max-height:80%; max-width:100%;">
+                {%endif%}
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title"><a href="{{item.get_absolute_url}}">{{item.title}}</a></h4>
+                    <p class="card-text">{{item.content}}</p>
+                    <a href="{{item.get_absolute_url}}" class="btn btn-primary text-center">Читать больше</a>
+                    <p class="card-text"><small class="text-muted">{{item.updated_at}}</small></p>
+
+                </div>
+            </div>
+
+            {%endfor%}
+    </div>
+    </div>
+</div>
+</div>
+{%endblock%}
