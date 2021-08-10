@@ -18,13 +18,18 @@ class SignUpView(generic.CreateView):
     success_url = reverse_lazy('login')
     template_name = 'registration.html'
 
+
 @login_required
 def profile(request):
     form = UpdateForm(request.POST, request.FILES, instance=request.user)
     cert = Certificates.objects.filter(person=request.user) & Certificates.objects.filter(status=True)
     group = Group.objects.filter(name=request.user.group)
-    filial = Filial.objects.filter(title=group[0].filial)
-    club = Club.objects.filter(name=filial[0].club)
+    if group.exists():
+        filial = Filial.objects.filter(title=group[0].filial)
+        club = Club.objects.filter(name=filial[0].club)
+    else:
+        filial = 'Не выбран'
+        club = 'Не выбран'
     if request.method == 'POST':
         if form.is_valid():
             form.save()
@@ -38,9 +43,12 @@ def profile(request):
 @login_required
 def news(request):
     group = Group.objects.filter(name=request.user.group)
-    filial = Filial.objects.filter(title=group[0].filial)
-    club = Club.objects.filter(name=filial[0].club)
-    novosti = News.objects.filter(club=club[0].pk)|News.objects.filter(for_all=True)
+    if group.exists():
+        filial = Filial.objects.filter(title=group[0].filial)
+        club = Club.objects.filter(name=filial[0].club)
+        novosti = News.objects.filter(club=club[0].pk)|News.objects.filter(for_all=True)
+    else:
+        novosti =News.objects.filter(for_all=True)
     context = {
         'news': novosti,
         'title': 'Новости',

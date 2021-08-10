@@ -21,15 +21,7 @@
       <ul class="nav navbar-nav pull-left">
         <li><a class="sidebar-toggle" data-toggle="push-menu" href=""></a> </li>
       </ul>
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-          <!-- Messages: style can be found in dropdown.less-->
 
-          <!-- Notifications: style can be found in dropdown.less -->
-
-          <!-- User Account: style can be found in dropdown.less -->
-        </ul>
-      </div>
     </nav>
   </header>
   <!-- Left side column. contains the logo and sidebar -->
@@ -80,3 +72,9 @@
     </div>
     <!-- /.sidebar -->
   </aside>
+<script type="text/javascript">
+  $(document).ready(function(){
+    var link = window.location.pathname;
+    $('.sidebar-menu li a[href="'+link+'"]').parent().addClass('active');
+  });
+</script>

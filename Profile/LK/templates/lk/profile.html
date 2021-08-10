@@ -25,16 +25,17 @@
           </div>
           <div class="info-box">
             <div class="box-body"> <strong><i class="fa fa-book margin-r-5"></i> Пояс</strong>
-              {%for obj in cert%}
 
-              <p class="text-muted"> {{obj.belt}} </p>
-
-              {%endfor%}
+                {%if cert.belt%}
+              <p class="text-muted"> {{cert.belt}} </p>
+                {%else%}
+              <p class="text-muted"> Не имеет </p>
+                {%endif%}
               <hr>
               <strong><i class="fa fa-map-marker margin-r-5"></i> Филиал</strong>
-              {%for fil in filial%}
-              <p class="text-muted">{{fil.title}}</p>
-              {%endfor%}
+
+              <p class="text-muted">{{filial.title}}</p>
+
               <hr>
               <strong><i class="fa fa-envelope margin-r-5"></i> Email</strong>
               <p class="text-muted">{{user.email}}</p>
