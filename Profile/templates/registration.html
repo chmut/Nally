@@ -35,7 +35,9 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-box-body">
-    <h3 class="login-box-msg">Регистрация</h3>
+    <div class="text-center m-b-3">
+      <img src="{{MEDIA_URL}}/logo/logo_back_free.png" width="160">
+    </div>
     <form method="post">
         {%csrf_token%}
       <div class="form-group has-feedback">
