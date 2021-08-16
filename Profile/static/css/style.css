@@ -170,12 +170,12 @@ h6 {
 	margin-bottom: 10px;
 }
 a {
-	color: #5867dd
+	color: #f7ae3f
 }
 a:hover, a:active, a:focus {
 	outline: none;
 	text-decoration: none;
-	color: #7b88f3
+	color: #f57b13
 }
 .page-header {
 	margin: 10px 0 20px 0;
@@ -210,7 +210,7 @@ b{
 	display: inherit;
 }
 .main-header .navbar.blue-bg {
-	background: #5867dd;
+	background: #f57b13;
 }
 .layout-top-nav .main-header .navbar {
 	margin-left: 0
@@ -434,7 +434,7 @@ color:#ccc
 position:fixed;
 }
 .main-header .logo.blue-bg {
-	background: #5867dd;
+	background: #151515;
 }
 .main-header .navbar-brand {
 	color: #fff
@@ -587,15 +587,15 @@ ul.fa-ul{
 }
 .tab-style1 ul li a:hover, .customtab li a.nav-link:hover{
 	background-color: transparent;
-	color: #5867dd;
+	color: #f57b13;
 }
 .tab-style1 ul.nav-tabs .nav-item.show .nav-link, .tab-style1 ul.nav-tabs .nav-link.active, .tab-style1 ul.nav-tabs .nav-link {
 	border: 0;
 }
 .tab-style1 ul.nav-tabs li a.active, .customtab li a.nav-link.active{
 	background-color: transparent;
-	color: #5867dd;
-	border-bottom: solid 1px #5867dd !important;
+	color: #f57b13;
+	border-bottom: solid 1px #f57b13 !important;
 }
 .bd-example-row .row > .col, .bd-example-row .row > [class^="col-"] {
     padding-top: .75rem;
@@ -763,7 +763,7 @@ ul.fa-ul{
 	padding-top: 60px;
 	min-height: 100%;
 	width: 230px;
-	background: #2f3742;
+	background: #151515;
 	z-index: 810;
 	-webkit-transition: -webkit-transform .3s ease-in-out, width .3s ease-in-out;
 	-moz-transition: -moz-transform .3s ease-in-out, width .3s ease-in-out;
@@ -810,7 +810,7 @@ ul.fa-ul{
 	width: 100%;
 	padding: 20px 10px;
 	overflow: hidden;
-	background: url('https://phonoteka.org/uploads/posts/2021-05/1620196887_4-phonoteka_org-p-blagorodnii-serii-fon-4.jpg') no-repeat left top;
+	background: url('https://sun9-4.userapi.com/impg/X3y0vkrbTBwX69IqEHvxcG4iO6lQbLE3rdtLUg/YyNBNSmgC_o.jpg?size=2000x1343&quality=96&sign=3c4e507f0d7a5682454e1f94f569f21c&type=album') no-repeat right top;
 }
 .user-panel:before, .user-panel:after {
 	content: " ";
@@ -831,7 +831,7 @@ ul.fa-ul{
 	padding: 5px 0px;
 	line-height: 1;
 	text-align: center;
-	color: #FFF;
+	color: #fff;
 	font-size: 14px;
 }
 .user-panel>.info>p {
@@ -863,11 +863,11 @@ ul.fa-ul{
 	color: #cccccc;
 }
 .sidebar-menu > li.active > a {
-	border-left: solid 3px #5867dd;
+	border-left: solid 3px #f57b13;
 }
 .sidebar-menu > li:hover > a, .sidebar-menu > li.active > a, .sidebar-menu > li.menu-open > a {
-	background: #29313b;
-	color: #fff;
+	background: #0a0a0a;
+	color: #f57b13;
 }
 .sidebar-menu>li>a>.fa, .sidebar-menu>li>a>.glyphicon, .sidebar-menu>li>a>.ion {
 	width: 20px
@@ -2976,15 +2976,20 @@ small.text-muted {
 .btn-default{
 	background-color: #f4f4f4;
 	color: #444;
-	border-color: #ddd
+	border-color: #f4f4f4
 }
 .btn-default:hover, .btn-default:active, .btn-default.hover {
-	background-color: #e7e7e7
+	background-color: #f57b13;
+	border-color: #f57b13
 }
 .btn-primary{
-	background-color: #5867dd;
-	border-color: #4857d0
+	background-color: #ff9a00;
+	border-color: #ff9a00;
+	color:#151515
 }
+
+
+
 caption button.btn-default{
 	background-color: #5867dd;
 	border-color: #4857d0;
@@ -2992,7 +2997,8 @@ caption button.btn-default{
 	color:#FFF;
 }
 .btn-primary:hover, .btn-primary:active, .btn-primary.hover, caption button.btn-default:hover{
-	background-color: #6a79ee
+	background-color: #f57b13;
+	border-color: #f57b13
 }
 .btn-success {
 	background-color: #00a65a;
@@ -3259,8 +3265,8 @@ ul.plan-list li{
 	border-color: #00acd6
 }
 .nav>li>a:hover, .nav>li>a:active, .nav>li>a:focus {
-	color: #fff;
-	background: #4757d1
+	color: #f57b13;
+	background: #151515
 }
 .nav-pills>li>a {
 	border-radius: 0;
@@ -3824,7 +3830,7 @@ table.text-center, table.text-center td, table.text-center th {
 .user-profile-box{
 	padding:60px 20px 50px 20px;
 	border-radius:3px;
-	background:url(https://phonoteka.org/uploads/posts/2021-05/1620196887_4-phonoteka_org-p-blagorodnii-serii-fon-4.jpg) no-repeat center top;
+	background:url(https://sun9-4.userapi.com/impg/X3y0vkrbTBwX69IqEHvxcG4iO6lQbLE3rdtLUg/YyNBNSmgC_o.jpg?size=2000x1343&quality=96&sign=3c4e507f0d7a5682454e1f94f569f21c&type=album) no-repeat center top;
 }
 .widget-user .widget-user-username {
 	margin-top: 0;
@@ -4044,11 +4050,11 @@ table.text-center, table.text-center td, table.text-center th {
 	color: #444
 }
 .login-page, .register-page {
-	background:url(http://www.agatu.ru/lk/smi/%D0%A2%D1%85%D1%8D%D0%BA%D0%B2%D0%BE%D0%BD%D0%B4%D0%BE.jpg) no-repeat center center;
+	background:url(https://psv4.userapi.com/c536132/u12622315/docs/d6/b705efe096c2/zheltyi-seryi-linii.jpg?extra=qxPBXg_LPW6UDscxIUMzXDbmaEco9L2QVP5H30kLloZHk4lLwzAXmB_K5EiE-J4hoVlP90IzCFomTy4Kpa0G7WqSgZte5lC_HKhszQrF-kTJdN3xo1T9NQZEfiDsn0CT9GVhNxA6N9y7KsflFLrJsA) no-repeat center center;
 	background-size:cover;
 }
 .login-page.sty1, .register-page.sty1{
-	background:url(http://www.agatu.ru/lk/smi/%D0%A2%D1%85%D1%8D%D0%BA%D0%B2%D0%BE%D0%BD%D0%B4%D0%BE.jpg) no-repeat center center;
+	background:url(https://psv4.userapi.com/c536132/u12622315/docs/d6/b705efe096c2/zheltyi-seryi-linii.jpg?extra=qxPBXg_LPW6UDscxIUMzXDbmaEco9L2QVP5H30kLloZHk4lLwzAXmB_K5EiE-J4hoVlP90IzCFomTy4Kpa0G7WqSgZte5lC_HKhszQrF-kTJdN3xo1T9NQZEfiDsn0CT9GVhNxA6N9y7KsflFLrJsA) no-repeat center center;
 	background-size:cover;
 }
 .login-box, .register-box {
@@ -4068,7 +4074,7 @@ table.text-center, table.text-center td, table.text-center th {
 }
 }
 .login-box-body, .register-box-body {
-	background: #fff;
+	background: #151515;
 	padding: 20px;
 	border-top: 0;
 	color: #666;

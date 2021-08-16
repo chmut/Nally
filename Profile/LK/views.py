@@ -1,4 +1,7 @@
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.hashers import check_password
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
@@ -30,13 +33,14 @@ def profile(request):
     else:
         filial = 'Не выбран'
         club = 'Не выбран'
+
     if request.method == 'POST':
         if form.is_valid():
             form.save()
         else:
             print(form.errors)
-            pass
     form = UpdateForm()
+
     return render(request, 'lk/profile.html', {"form": form, "cert": cert, "filial": filial})
 
 

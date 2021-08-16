@@ -30,12 +30,21 @@
 <!--[if lt IE 9]>
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <style>
+    .user-profile{
+	padding:60px 20px 50px 20px;
+	border-radius:3px;
+	background:url(https://sun9-4.userapi.com/impg/X3y0vkrbTBwX69IqEHvxcG4iO6lQbLE3rdtLUg/YyNBNSmgC_o.jpg?size=2000x1343&quality=96&sign=3c4e507f0d7a5682454e1f94f569f21c&type=album) no-repeat center top;
+}
+  </style>
 <![endif]-->
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-box-body">
-    <h3 class="login-box-msg">Авторизация</h3>
+    <div class="text-center m-b-3">
+      <img src="{{MEDIA_URL}}/logo/logo_back_free.png" width="160">
+    </div>
     <form method="post">
       {%csrf_token%}
       <div class="form-group has-feedback">
