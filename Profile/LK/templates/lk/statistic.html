@@ -1,0 +1,38 @@
+{%extends 'base.html'%}
+{%block title%}
+Посещаемость
+{%endblock%}
+{%block content%}
+<div class="content-wrapper">
+    <div class="content-header sty-one">
+      <h1 class="text-black">Посещаемость</h1>
+    </div>
+<div class="content">
+      <div class="info-box">
+        <h4 class="text-black">Посещения</h4>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Дата</th>
+                <th scope="col">Посещение</th>
+              </tr>
+            </thead>
+            <tbody>
+            {%for stat in stat%}
+              <tr>
+                <td>{{stat.day}}</td>
+                  {%if stat.status%}
+                  <td><span class="label label-success">Присутствовал</span></td>
+                  {%else%}
+                    <td><span class="label label-danger">Отсутствовал</span></td>
+                  {%endif%}
+              </tr>
+            {%endfor%}
+            </tbody>
+          </table>
+        </div>
+      </div>
+</div>
+</div>
+    {%endblock%}

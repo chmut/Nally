@@ -13,5 +13,6 @@ urlpatterns = [
     path('news/<int:news_id>/', view_news, name='view_news'),
     path('create_order', create_order, name='create_order'),
     path('orders', orders, name='orders'),
+    path('statistic', stat, name='statistic'),
     path('favicon.ico', RedirectView.as_view(url='/static/favicon.png'), name='favicon'),
 ]

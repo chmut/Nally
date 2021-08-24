@@ -58,6 +58,11 @@ class OrdersAdmin(admin.ModelAdmin):
     search_fields = ('name', 'size', 'color', 'status', 'client')
 
 
+class StatisticAdmin(admin.ModelAdmin):
+    list_display = ('user', 'day', 'status')
+    search_fields = ('user', 'day', 'status')
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Filial, FilialAdmin)
 admin.site.register(Trainers, TrainersAdmin)
@@ -68,3 +73,4 @@ admin.site.register(Club, ClubAdmin)
 admin.site.register(City, CityAdmin)
 admin.site.register(News, NewsAdmin)
 admin.site.register(Orders, OrdersAdmin)
+admin.site.register(Statistic, StatisticAdmin)

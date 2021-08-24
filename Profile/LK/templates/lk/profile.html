@@ -18,7 +18,7 @@
               {%if user.avatar %}
               <img class="profile-user-img img-responsive img-circle m-b-2" src="{{user.avatar.url}}" alt="User profile pictures">
               {%else%}
-              <img class="profile-user-img img-responsive img-circle m-b-2" src="https://shvsm-penza.ru/wp-content/uploads/2020/11/maxresdefault-1.jpg" alt="User profile picture">
+              <img class="profile-user-img img-responsive img-circle m-b-2" src="{{MEDIA_URL}}/ava_default.jpg" alt="User profile picture">
               {%endif%}
               <h3 class="profile-username text-center">{{user.username}}</h3>
             </div>

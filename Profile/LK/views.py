@@ -168,4 +168,11 @@ def create_order(request):
     return render(request, 'lk/create_order.html', data)
 
 
-
+@login_required
+def stat(request):
+    stat = Statistic.objects.filter(user_id=request.user)
+    context = {
+        'stat':stat,
+        'title': 'Посещаемость',
+    }
+    return render(request, 'lk/statistic.html', context)

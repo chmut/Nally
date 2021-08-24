@@ -4,6 +4,10 @@ from django.urls import reverse
 
 
 class User(AbstractUser):
+    jobs = (
+        ('Спортсмен', 'Спортсмен'),
+        ('Тренер', 'Тренер'),
+    )
     email = models.EmailField(unique=True)
     #username = models.CharField(blank=True, null=True, max_length=150)
     group = models.ForeignKey('Group', on_delete=models.PROTECT, null=True, verbose_name='Группа')
@@ -16,6 +20,7 @@ class User(AbstractUser):
     weight = models.IntegerField(blank=True, null=True, verbose_name='Вес спортсмена')
     passport = models.CharField(blank=True, null=True, verbose_name='Номер паспорта спортсмена', max_length=100)
     bio = models.TextField(null=True, max_length=1000, verbose_name='Описание')
+    job = models.CharField(max_length=20, choices=jobs, default=jobs[0][0], verbose_name='Должность')
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -53,28 +58,28 @@ class Trainers(models.Model):
         ('Помощ', 'Помощник'),
     )
     belts =(
-        ('10', '10 гуп'),
-        ('9', '9 гуп'),
-        ('8', '8 гуп'),
-        ('7', '7 гуп'),
-        ('6', '6 гуп'),
-        ('5', '5 гуп'),
-        ('4', '4 гуп'),
-        ('3', '3 гуп'),
-        ('2', '2 гуп'),
-        ('1', '1 гуп'),
-        ('1д', '1 дан'),
-        ('2д', '2 дан'),
-        ('3д', '3 дан'),
-        ('4д', '4 дан'),
-        ('5д', '5 дан'),
-        ('6д', '6 дан'),
-        ('7д', '7 дан'),
-        ('8д', '8 дан'),
-        ('9д', '9 дан'),
+        ('10 гуп', '10 гуп'),
+        ('9 гуп', '9 гуп'),
+        ('8 гуп', '8 гуп'),
+        ('7 гуп', '7 гуп'),
+        ('6 гуп', '6 гуп'),
+        ('5 гуп', '5 гуп'),
+        ('4 гуп', '4 гуп'),
+        ('3 гуп', '3 гуп'),
+        ('2 гуп', '2 гуп'),
+        ('1 гуп', '1 гуп'),
+        ('1 дан', '1 дан'),
+        ('2 дан', '2 дан'),
+        ('3 дан', '3 дан'),
+        ('4 дан', '4 дан'),
+        ('5 дан', '5 дан'),
+        ('6 дан', '6 дан'),
+        ('7 дан', '7 дан'),
+        ('8 дан', '8 дан'),
+        ('9 дан', '9 дан'),
     )
     name = models.CharField(max_length=150, verbose_name='ФИО')
-    belt = models.CharField(max_length=2, choices=belts, default=belts[0][0],verbose_name='Пояс')
+    belt = models.CharField(max_length=10, choices=belts, default=belts[0][0],verbose_name='Пояс')
     club = models.ForeignKey('Club', on_delete=models.PROTECT, null=True, verbose_name='Клуб')
     salary = models.IntegerField(null=True, verbose_name='Зарплата')
     job = models.CharField(max_length=5, choices=jobs, default=jobs[0][0], verbose_name='Должность')
@@ -89,31 +94,31 @@ class Trainers(models.Model):
 
 class Certificates(models.Model):
     belts = (
-        ('10', '10 гуп'),
-        ('9', '9 гуп'),
-        ('8', '8 гуп'),
-        ('7', '7 гуп'),
-        ('6', '6 гуп'),
-        ('5', '5 гуп'),
-        ('4', '4 гуп'),
-        ('3', '3 гуп'),
-        ('2', '2 гуп'),
-        ('1', '1 гуп'),
-        ('1д', '1 дан'),
-        ('2д', '2 дан'),
-        ('3д', '3 дан'),
-        ('4д', '4 дан'),
-        ('5д', '5 дан'),
-        ('6д', '6 дан'),
-        ('7д', '7 дан'),
-        ('8д', '8 дан'),
-        ('9д', '9 дан'),
+        ('10 гуп', '10 гуп'),
+        ('9 гуп', '9 гуп'),
+        ('8 гуп', '8 гуп'),
+        ('7 гуп', '7 гуп'),
+        ('6 гуп', '6 гуп'),
+        ('5 гуп', '5 гуп'),
+        ('4 гуп', '4 гуп'),
+        ('3 гуп', '3 гуп'),
+        ('2 гуп', '2 гуп'),
+        ('1 гуп', '1 гуп'),
+        ('1 дан', '1 дан'),
+        ('2 дан', '2 дан'),
+        ('3 дан', '3 дан'),
+        ('4 дан', '4 дан'),
+        ('5 дан', '5 дан'),
+        ('6 дан', '6 дан'),
+        ('7 дан', '7 дан'),
+        ('8 дан', '8 дан'),
+        ('9 дан', '9 дан'),
     )
     cert_numb = models.CharField(max_length=30, verbose_name='Номер сертификата')
     person = models.ForeignKey('User', on_delete=models.PROTECT, null=True, verbose_name='Пользователь')
     status = models.BooleanField(default=0, verbose_name='Статус')
     data = models.DateField(verbose_name='Дата выдачи')
-    belt = models.CharField(max_length=2, choices=belts, default=belts[0][0], verbose_name='Пояс')
+    belt = models.CharField(max_length=10, choices=belts, default=belts[0][0], verbose_name='Пояс')
     color = models.CharField(max_length=60, null=True, verbose_name='Цвет')
 
     class Meta:
@@ -258,3 +263,14 @@ class Orders(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Statistic(models.Model):
+    user = models.ForeignKey('User', blank=True, null=True, verbose_name='Спортсмен', on_delete=models.PROTECT)
+    day = models.DateField(verbose_name='Дата')
+    status = models.BooleanField(default=False, verbose_name='Посещение')
+
+    class Meta:
+        verbose_name = 'Посещаемость'
+        verbose_name_plural = 'Посещаемость'
+        ordering = ['-id']
