@@ -32,6 +32,7 @@ class RegForm(UserCreationForm):
     phone = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control sty1', 'placeholder': 'Телефон'}))
     bd = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control sty1', 'placeholder': 'Дата рождения спортсмена'}))
+    city = forms.ModelChoiceField(queryset= City.objects.all(), widget=forms.Select(attrs={'class': 'form-control sty1', 'placeholder': 'Город'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control sty1', 'placeholder': 'Пароль'}))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control sty1', 'placeholder': 'Подтвердите пароль'}))
 
@@ -51,3 +52,23 @@ class UserOrders(forms.ModelForm):
             'client': forms.HiddenInput(),
             'status': forms.HiddenInput(),
         }
+
+
+class CreateNews(forms.ModelForm):
+    class Meta:
+        model = News
+        fields = ['title', 'content', 'club', 'city', 'photo', 'for_all']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control'}),
+            'club': forms.HiddenInput(),
+            'city': forms.HiddenInput(),
+            'photo': forms.FileInput(),
+            'for_all': forms.HiddenInput(),
+        }
+
+
+class UpdateSportsmen(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = '__all__'

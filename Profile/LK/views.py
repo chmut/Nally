@@ -2,11 +2,11 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import check_password
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from .forms import UpdateForm, LoginUserForm, RegForm, UserOrders
+from .forms import *
 from django.views import generic
 from .models import *
 
@@ -50,7 +50,8 @@ def news(request):
     if group.exists():
         filial = Filial.objects.filter(title=group[0].filial)
         club = Club.objects.filter(name=filial[0].club)
-        novosti = News.objects.filter(club=club[0].pk)|News.objects.filter(for_all=True)
+        city = City.objects.filter(name=club[0].city)
+        novosti = News.objects.filter(club=club[0].pk)|News.objects.filter(for_all=True)|News.objects.filter(city=city[0].pk)
     else:
         novosti =News.objects.filter(for_all=True)
     context = {
@@ -79,7 +80,6 @@ def orders(request):
 @login_required
 def create_order(request):
     error=''
-    form1 = UserOrders()
     if request.method == 'POST':
         if request.POST.get("form_type") == 'formOne':
             data = request.POST.copy()
@@ -176,3 +176,42 @@ def stat(request):
         'title': 'Посещаемость',
     }
     return render(request, 'lk/statistic.html', context)
+
+
+@login_required
+def create_news(request):
+    if request.user.job=='Тренер':
+        filial = Filial.objects.filter(title = request.user.filial)
+        club = Club.objects.filter(name=filial[0].club)
+        if request.method == 'POST':
+            data = request.POST.copy()
+            data['club'] = Club.objects.get(name=filial[0].club)
+            data['city'] = City.objects.get(name=club[0].city)
+            form = CreateNews(data, request.FILES)
+            if form.is_valid():
+                news = News.objects.create(**form.cleaned_data)
+                return redirect(news)
+            else:
+                print(form.errors)
+        else:
+            form = CreateNews()
+        return render(request, 'lk/create_news.html', {"form": form})
+    else:
+        return redirect('/news/')
+
+
+@login_required
+def sportsmen(request):
+    if request.user.job=='Тренер':
+        sportsmen = User.objects.filter(club=request.user.club)
+        form = UpdateSportsmen()
+        if request.method == 'POST':
+            data = request.POST.copy()
+            form = UpdateSportsmen(data)
+            if form.is_valid():
+                form.save()
+        else:
+            form = UpdateSportsmen()
+        return render(request, 'lk/sportsmen.html', {"sportsmen":sportsmen, "form":form})
+    else:
+        return redirect('/profile/')

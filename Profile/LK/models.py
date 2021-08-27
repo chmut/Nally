@@ -11,6 +11,9 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     #username = models.CharField(blank=True, null=True, max_length=150)
     group = models.ForeignKey('Group', on_delete=models.PROTECT, null=True, verbose_name='Группа')
+    filial = models.ForeignKey('Filial', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Филиал')
+    club = models.ForeignKey('Club', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Клуб')
+    city = models.ForeignKey('City', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Город')
     bd = models.DateField(auto_now=False, auto_now_add=False, null=True, verbose_name='Дата рождения спортсмена')
     avatar = models.ImageField(upload_to='avatar/%Y/%m/%d/', null=True, blank=True, verbose_name='Аватарка')
     phone = models.IntegerField(null=True, verbose_name='Телефон')
@@ -183,9 +186,7 @@ class Club(models.Model):
 class News(models.Model):
     title = models.CharField(max_length=80, verbose_name='Заголовок')
     content = models.TextField(verbose_name='Контент')
-    category = models.CharField(max_length=30,verbose_name='Категории')
-    club = models.ForeignKey('Club', on_delete=models.PROTECT,  verbose_name='Клуб')
-    created_at = models.DateTimeField(verbose_name='Дата и время публикации')
+    club = models.ForeignKey('Club', blank=True, null=True, on_delete=models.PROTECT,  verbose_name='Клуб')
     city = models.ForeignKey('City', blank=True, null=True, on_delete=models.PROTECT, verbose_name='Город')
     created_at = models.DateField(auto_now_add=True, verbose_name='Дата публикации')
     # Тип Даты с автоматическим указанием даты и времени
@@ -274,3 +275,6 @@ class Statistic(models.Model):
         verbose_name = 'Посещаемость'
         verbose_name_plural = 'Посещаемость'
         ordering = ['-id']
+
+    def __str__(self):
+        return self.user

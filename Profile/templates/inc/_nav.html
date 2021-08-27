@@ -67,8 +67,9 @@
         <li> <a href="{%url 'statistic'%}"> <i class="fa fa-calendar"></i> <span>Посещаемость</span> </a></li>
         {%if user.job == 'Тренер'%}
         <li class="header">Администрирование</li>
-        <li> <a href="{%url 'news'%}"> <i class="fa fa-briefcase"></i> <span>Новости</span> </a></li>
-
+        <li> <a href="{%url 'create_news'%}"> <i class="fa fa-briefcase"></i> <span>Сделать новость</span> </a></li>
+        <li> <a href="{%url 'sportsmen'%}"> <i class="fa fa-briefcase"></i> <span>Список спортсменов</span> </a></li>
+        <li> <a href="{%url 'news'%}"> <i class="fa fa-briefcase"></i> <span>Посещаемость</span> </a></li>
         {%endif%}
         <li> <a href="{%url 'logout'%}"> <i class="fa fa-sign-out"></i> <span>Выйти</span> </a></li>
       </ul>

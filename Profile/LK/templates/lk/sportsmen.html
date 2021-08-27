@@ -1,0 +1,40 @@
+{%extends 'base.html'%}
+{%block title%}
+Список спортсменов
+{%endblock%}
+{%block content%}
+<div class="content-wrapper">
+    <div class="content-header sty-one">
+      <h1 class="text-black">Спортсмены</h1>
+    </div>
+<div class="content">
+      <div class="info-box">
+        <h4 class="text-black">Спортсмены</h4>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Имя</th>
+                <th scope="col">Фамилия</th>
+                <th scope="col">Филиал</th>
+                <th scope="col">Группа</th>
+                <th scope="col">Логин</th>
+              </tr>
+            </thead>
+            <tbody>
+            {%for sportsmen in sportsmen%}
+              <tr>
+                <td>{{sportsmen.first_name}}</td>
+                <td>{{sportsmen.last_name}}</td>
+                <td>{{form.filial}}</td>
+                <td>{{form.group}}</td>
+                <td>{{sportsmen.username}}</td>
+              </tr>
+            {%endfor%}
+            </tbody>
+          </table>
+        </div>
+      </div>
+</div>
+</div>
+    {%endblock%}

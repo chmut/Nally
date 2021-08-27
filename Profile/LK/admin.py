@@ -39,18 +39,13 @@ class ClubAdmin(admin.ModelAdmin):
 
 
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'club', 'city', 'for_all')
-    search_fields = ('title', 'category', 'club', 'city', 'for_all')
+    list_display = ('title', 'club', 'city', 'for_all')
+    search_fields = ('title', 'club', 'city', 'for_all')
 
 
 class CityAdmin(admin.ModelAdmin):
     list_display = ('name', 'region')
     search_fields = ('name', 'region')
-
-
-class NewsAdmin(admin.ModelAdmin):
-    list_display = ('title', 'created_at', 'updated_at', 'category', 'city', 'club')
-    search_fields = ('title', 'content')
 
 
 class OrdersAdmin(admin.ModelAdmin):

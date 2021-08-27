@@ -1,0 +1,15 @@
+{%extends 'base.html'%}
+{%block title%}
+Создать новость
+{%endblock%}
+{%block content%}
+    <div class="content">
+        <div class="content-wrapper">
+            <form method="post" enctype="multipart/form-data">
+                {%csrf_token%}
+                {{form.as_p}}
+                <input type="submit" class="btn btn-success" value="Опубликовать">
+            </form>
+        </div>
+    </div>
+{%endblock%}

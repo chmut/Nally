@@ -14,5 +14,7 @@ urlpatterns = [
     path('create_order', create_order, name='create_order'),
     path('orders', orders, name='orders'),
     path('statistic', stat, name='statistic'),
+    path('create_news', create_news, name='create_news'),
+    path('sportsmen', sportsmen, name='sportsmen'),
     path('favicon.ico', RedirectView.as_view(url='/static/favicon.png'), name='favicon'),
 ]
