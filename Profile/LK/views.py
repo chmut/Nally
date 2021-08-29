@@ -3,15 +3,18 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import check_password
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.views.generic import UpdateView, ListView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import *
 from django.views import generic
 from .models import *
+from django.core.paginator import Paginator
 
 
-class LoginUser (LoginView):
+class LoginUser(LoginView):
     form_class = LoginUserForm
     template_name = 'registration/login.html'
 
@@ -51,10 +54,18 @@ def news(request):
         filial = Filial.objects.filter(title=group[0].filial)
         club = Club.objects.filter(name=filial[0].club)
         city = City.objects.filter(name=club[0].city)
-        novosti = News.objects.filter(club=club[0].pk)|News.objects.filter(for_all=True)|News.objects.filter(city=city[0].pk)
+        novosti = News.objects.filter(club=club[0].pk) | News.objects.filter(for_all=True) | News.objects.filter(
+            city=city[0].pk)
+        # paginator = Paginator(novosti, 10)
+        # page_num = request.GET.get('page', 1)
+        # page_objects = paginator.get_page(page_num)
     else:
-        novosti =News.objects.filter(for_all=True)
+        novosti = News.objects.filter(for_all=True)
+        # paginator = Paginator(novosti, 10)
+        # page_num = request.GET.get('page', 1)
+        # page_objects = paginator.get_page(page_num)
     context = {
+        # 'news': page_objects,
         'news': novosti,
         'title': 'Новости',
     }
@@ -71,7 +82,7 @@ def view_news(request, news_id):
 def orders(request):
     ord = Orders.objects.filter(client_id=request.user)
     context = {
-        'ord':ord,
+        'ord': ord,
         'title': 'Заказы',
     }
     return render(request, 'lk/orders.html', context)
@@ -79,7 +90,7 @@ def orders(request):
 
 @login_required
 def create_order(request):
-    error=''
+    error = ''
     if request.method == 'POST':
         if request.POST.get("form_type") == 'formOne':
             data = request.POST.copy()
@@ -172,7 +183,7 @@ def create_order(request):
 def stat(request):
     stat = Statistic.objects.filter(user_id=request.user)
     context = {
-        'stat':stat,
+        'stat': stat,
         'title': 'Посещаемость',
     }
     return render(request, 'lk/statistic.html', context)
@@ -180,8 +191,8 @@ def stat(request):
 
 @login_required
 def create_news(request):
-    if request.user.job=='Тренер':
-        filial = Filial.objects.filter(title = request.user.filial)
+    if request.user.job == 'Тренер':
+        filial = Filial.objects.filter(title=request.user.filial)
         club = Club.objects.filter(name=filial[0].club)
         if request.method == 'POST':
             data = request.POST.copy()
@@ -202,16 +213,30 @@ def create_news(request):
 
 @login_required
 def sportsmen(request):
-    if request.user.job=='Тренер':
+    if request.user.job == 'Тренер':
         sportsmen = User.objects.filter(club=request.user.club)
-        form = UpdateSportsmen()
-        if request.method == 'POST':
-            data = request.POST.copy()
-            form = UpdateSportsmen(data)
-            if form.is_valid():
-                form.save()
-        else:
-            form = UpdateSportsmen()
-        return render(request, 'lk/sportsmen.html', {"sportsmen":sportsmen, "form":form})
+        return render(request, 'lk/sportsmen.html', {"sportsmen": sportsmen})
     else:
         return redirect('/profile/')
+
+
+class SportsmenUpdate(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UpdateSportsmen
+    template_name = 'lk/sportsmen_update.html'
+    success_url = reverse_lazy('sportsmen')
+
+
+class Groups(LoginRequiredMixin, ListView):
+    model = Group
+    template_name = 'lk/groups.html'
+    context_object_name = 'groups'
+
+    def get_queryset(self):
+        return Group.objects.filter(filial=self.request.user.filial)
+
+
+class CreateGroup(LoginRequiredMixin, CreateView):
+    form_class = GroupForm
+    template_name = 'lk/create_group.html'
+    success_url = reverse_lazy('groups')

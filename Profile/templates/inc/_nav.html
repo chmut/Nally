@@ -31,7 +31,7 @@
       <!-- Sidebar user panel -->
       <div class="user-panel">
        <div class="image text-center">
-         {%if user.avatar %}
+         {%if request.user.avatar %}
               <img class="img-circle" src="{{user.avatar.url}}" alt="User profile picture">
               {%else%}
               <img class="img-circle" src="{{MEDIA_URL}}/ava_default.jpg" alt="User profile picture">
@@ -40,7 +40,7 @@
        </div>
         <div class="info">
           {%if user.is_authenticated%}
-          <p>{{user.first_name}}</p>
+          <p>{{request.user.first_name}}</p>
           {%endif%}
           </div>
       </div>
@@ -64,10 +64,11 @@
           </ul>
         </li>
         <li> <a href="{%url 'news'%}"> <i class="fa fa-briefcase"></i> <span>Новости</span> </a></li>
+        {%if request.user.job == 'Спортсмен'%}
         <li> <a href="{%url 'statistic'%}"> <i class="fa fa-calendar"></i> <span>Посещаемость</span> </a></li>
-        {%if user.job == 'Тренер'%}
+        {%elif request.user.job == 'Тренер'%}
         <li class="header">Администрирование</li>
-        <li> <a href="{%url 'create_news'%}"> <i class="fa fa-briefcase"></i> <span>Сделать новость</span> </a></li>
+        <li> <a href="{%url 'groups'%}"> <i class="fa fa-briefcase"></i> <span>Филиал</span> </a></li>
         <li> <a href="{%url 'sportsmen'%}"> <i class="fa fa-briefcase"></i> <span>Список спортсменов</span> </a></li>
         <li> <a href="{%url 'news'%}"> <i class="fa fa-briefcase"></i> <span>Посещаемость</span> </a></li>
         {%endif%}

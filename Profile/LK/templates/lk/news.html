@@ -4,25 +4,33 @@
 
 <div class="content-wrapper">
     <div class="content-header sty-one">
-      <h1 class="text-black">Новости</h1>
+        <div class="row">
+            <div class="col-6">
+            <h1 class="text-black">Новости</h1>
+        </div>
+            {%if request.user.job == 'Тренер'%}
+            <div class="col-3 offset-md-3">
+                <a href="{%url 'create_news'%}" class="btn btn-rounded btn-warning">Добавить новость</a>
+            </div>
+            {%endif%}
+        </div>
     </div>
 <div class="content">
     <div class="row justify-content-center">
-        <div class="col-sm-10">
+        <div class="col-sm-9">
             {%for item in news%}
 
             <div class="card text-center mb-5" >
                 <div >
                 {%if item.photo%}
-                <img src="{{item.photo.url}}" class="card-img-top my-5">
+                <img src="{{item.photo.url}}" class="card-img-top img-fluid">
                 {%else%}
-                <img src="https://shvsm-penza.ru/wp-content/uploads/2020/11/maxresdefault-1.jpg" class="card-img-top"
-                     alt="..." style="max-height:80%; max-width:100%;">
+                <img src="https://shvsm-penza.ru/wp-content/uploads/2020/11/maxresdefault-1.jpg" class="card-img-top img-fluid">
                 {%endif%}
                 </div>
                 <div class="card-body">
                     <h4 class="card-title"><a href="{{item.get_absolute_url}}">{{item.title}}</a></h4>
-                    <p class="card-text">{{item.content}}</p>
+                    <p class="card-text">{{item.content|safe|linebreaks|truncatewords:50}}</p>
                     <a href="{{item.get_absolute_url}}" class="btn btn-primary text-center">Читать больше</a>
                     <p class="card-text"><small class="text-muted">{{item.updated_at}}</small></p>
 
@@ -30,7 +38,16 @@
             </div>
 
             {%endfor%}
+
+            <!--<ul class="pagination justify-content-center" style="float:none;">
+                    {%for p in news.paginator.page_range%}
+                <li class="page-item"><a class="page-link" href="?page={{p}}">{{p}}</a></li>
+
+                    {%endfor%}
+            </ul>-->
+
     </div>
+
     </div>
 </div>
 </div>

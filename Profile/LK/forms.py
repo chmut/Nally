@@ -71,4 +71,34 @@ class CreateNews(forms.ModelForm):
 class UpdateSportsmen(forms.ModelForm):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['club', 'filial', 'group', 'weight', 'passport', 'bio', 'job']
+        widgets = {
+            'group': forms.Select(attrs={'class': 'form-control'}),
+            'filial': forms.HiddenInput(),
+            'club': forms.HiddenInput(),
+            'weight': forms.TextInput(attrs={'class': 'form-control'}),
+            'passport': forms.TextInput(attrs={'class': 'form-control'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control'}),
+            'job': forms.Select(attrs={'class': 'form-control'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['filial'].queryset = Filial.objects.filter(club=self.initial['club'])
+        self.fields['group'].queryset = Group.objects.filter(filial=self.initial['filial'])
+
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name', 'cost', 'filial', 'trainer']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'filial': forms.Select(attrs={'class': 'form-control'}),
+            'cost': forms.TextInput(attrs={'class': 'form-control'}),
+            'trainer': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['filial'].queryset = Filial.objects.filter(club=self.user.club)

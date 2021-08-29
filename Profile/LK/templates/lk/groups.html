@@ -1,0 +1,48 @@
+{%extends 'base.html'%}
+{%block title%}
+Список спортсменов
+{%endblock%}
+{%block content%}
+<div class="content-wrapper">
+    <div class="content-header sty-one">
+        <div class="row">
+            <div class="col-6">
+            <h1 class="text-black">Группы</h1>
+        </div>
+
+            <div class="col-3 offset-md-3">
+                <a href="{%url 'create_group'%}" class="btn btn-rounded btn-warning">Добавить группу</a>
+            </div>
+
+        </div>
+    </div>
+<div class="content">
+      <div class="info-box">
+        <h4 class="text-black">Группы</h4>
+        <div class="table-responsive">
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Название</th>
+                <th scope="col">Стоимость занятий</th>
+                <th scope="col">Филиал</th>
+                <th scope="col">Тренер</th>
+              </tr>
+            </thead>
+            <tbody>
+            {%for group in groups%}
+              <tr>
+                <td>{{group.name}}</td>
+                <td>{{group.cost}}</td>
+                <td>{{group.filial}}</td>
+                <td>{{group.trainer}}</td>
+              </tr>
+            {%endfor%}
+            </tbody>
+          </table>
+        </div>
+      </div>
+</div>
+</div>
+    {%endblock%}

@@ -16,5 +16,8 @@ urlpatterns = [
     path('statistic', stat, name='statistic'),
     path('create_news', create_news, name='create_news'),
     path('sportsmen', sportsmen, name='sportsmen'),
+    path('sportsmen/<int:pk>', SportsmenUpdate.as_view(), name='sportsmen_update'),
+    path('groups', Groups.as_view(), name='groups'),
+    path('groups/new', CreateGroup.as_view(), name='create_group'),
     path('favicon.ico', RedirectView.as_view(url='/static/favicon.png'), name='favicon'),
 ]

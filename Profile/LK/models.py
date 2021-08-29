@@ -122,7 +122,6 @@ class Certificates(models.Model):
     status = models.BooleanField(default=0, verbose_name='Статус')
     data = models.DateField(verbose_name='Дата выдачи')
     belt = models.CharField(max_length=10, choices=belts, default=belts[0][0], verbose_name='Пояс')
-    color = models.CharField(max_length=60, null=True, verbose_name='Цвет')
 
     class Meta:
         verbose_name = 'Сертификат'

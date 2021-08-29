@@ -19,8 +19,8 @@ class TrainersAdmin(admin.ModelAdmin):
 
 
 class CertAdmin(admin.ModelAdmin):
-    list_display = ('person', 'cert_numb', 'status', 'belt', 'color')
-    search_fields = ('person', 'cert_numb', 'belt', 'color')
+    list_display = ('person', 'cert_numb', 'status', 'belt')
+    search_fields = ('person', 'cert_numb', 'belt')
 
 
 class TimetableAdmin(admin.ModelAdmin):
