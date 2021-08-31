@@ -1,0 +1,79 @@
+{%extends 'base.html'%}
+{%block title%}
+Профиль
+{%endblock%}
+{%block content%}
+
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header sty-one">
+      <h1 class="text-black">Профиль</h1>
+    </div>
+     <!-- Main content -->
+     <div class="content">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="user-profile-box m-b-3">
+            <div class="box-profile text-dark">
+              {%if user.avatar %}
+              <img class="profile-user-img img-responsive img-circle m-b-2" src="{{user.avatar.url}}" alt="User profile pictures">
+              {%else%}
+              <img class="profile-user-img img-responsive img-circle m-b-2" src="{{MEDIA_URL}}/ava_default.jpg" alt="User profile picture">
+              {%endif%}
+              <h3 class="profile-username text-center">{{user.username}}</h3>
+            </div>
+          </div>
+          <div class="info-box">
+            <div class="box-body"> <strong><i class="fa fa-book margin-r-5"></i> Пояс</strong>
+                {%if cert.belt%}
+              <p class="text-muted"> {{cert.belt}} </p>
+                {%else%}
+              <p class="text-muted"> Не имеет </p>
+                {%endif%}
+              <hr>
+              <strong><i class="fa fa-map-marker margin-r-5"></i> Филиал</strong>
+                {%for obj in filial%}
+              <p class="text-muted">{{obj.title}}</p>
+                {%endfor%}
+              <hr>
+              <strong><i class="fa fa-envelope margin-r-5"></i> Email</strong>
+              <p class="text-muted">{{user.email}}</p>
+              <hr>
+              <strong><i class="fa fa-phone margin-r-5"></i> Телефон</strong>
+              <p>{{user.phone}} </p>
+              <hr>
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="info-box">
+            <div class="card tab-style1">
+              <!-- Nav tabs -->
+              <ul class="nav nav-tabs profile-tab" role="tablist">
+                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="{%url 'profile'%}" role="tab" aria-expanded="true">Профиль</a> </li>
+                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab">Настройки</a> </li>
+              </ul>
+              <!-- Tab panes -->
+              <div class="tab-content">
+
+                <!--second tab-->
+                <div class="tab-pane" id="settings" role="tabpanel">
+                  <form method="post" enctype="multipart/form-data">
+                  {%csrf_token%}
+                  {{form.as_p}}
+                        <div class="col-sm-12">
+                          <input type="submit" class="btn btn-primary">
+                        </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Main row -->
+    </div>
+{%endblock%}

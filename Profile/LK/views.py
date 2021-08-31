@@ -5,11 +5,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.views.generic import UpdateView, ListView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import *
-from django.views import generic
 from .models import *
 from django.core.paginator import Paginator
 
@@ -19,23 +17,34 @@ class LoginUser(LoginView):
     template_name = 'registration/login.html'
 
 
-class SignUpView(generic.CreateView):
+# class SignUpDop(CreateView):
+#     form_class = SportRegForm
+#     success_url = reverse_lazy('login')
+#     template_name = 'dop_registration.html'
+
+
+class SignUpView(CreateView):
     form_class = RegForm
     success_url = reverse_lazy('login')
     template_name = 'registration.html'
 
 
+class Profile(UpdateView):
+    form_class = UpdateForm
+    success_url = reverse_lazy('profile')
+    template_name = 'lk/profile.html'
+
 @login_required
 def profile(request):
     form = UpdateForm(request.POST, request.FILES, instance=request.user)
     cert = Certificates.objects.filter(person=request.user) & Certificates.objects.filter(status=True)
-    group = Group.objects.filter(name=request.user.group)
-    if group.exists():
-        filial = Filial.objects.filter(title=group[0].filial)
-        club = Club.objects.filter(name=filial[0].club)
-    else:
-        filial = 'Не выбран'
-        club = 'Не выбран'
+    # group = Group.objects.filter(name=request.user.group)
+    # if group.exists():
+    #     filial = Filial.objects.filter(title=group[0].filial)
+    #     club = Club.objects.filter(name=filial[0].club)
+    # else:
+    #     filial = 'Не выбран'
+    #     club = 'Не выбран'
 
     if request.method == 'POST':
         if form.is_valid():
@@ -44,7 +53,7 @@ def profile(request):
             print(form.errors)
     form = UpdateForm()
 
-    return render(request, 'lk/profile.html', {"form": form, "cert": cert, "filial": filial})
+    return render(request, 'lk/profile.html', {"form": form, "cert": cert})
 
 
 @login_required

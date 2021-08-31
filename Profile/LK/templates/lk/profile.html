@@ -25,13 +25,11 @@
           </div>
           <div class="info-box">
             <div class="box-body"> <strong><i class="fa fa-book margin-r-5"></i> Пояс</strong>
-                {%for objects in cert%}
-                {%if objects.belt%}
-              <p class="text-muted"> {{objects.belt}} </p>
+                {%if cert.belt%}
+              <p class="text-muted"> {{cert.belt}} </p>
                 {%else%}
               <p class="text-muted"> Не имеет </p>
                 {%endif%}
-                {%endfor%}
               <hr>
               <strong><i class="fa fa-map-marker margin-r-5"></i> Филиал</strong>
                 {%for obj in filial%}
@@ -318,15 +316,6 @@
                   </div>
                   </div>
                 </div>
-                <div class="tab-pane" id="settings" role="tabpanel">
-                  <form method="post" enctype="multipart/form-data">
-                  {%csrf_token%}
-                  {{form.as_p}}
-                        <div class="col-sm-12">
-                          <input type="submit" class="btn btn-primary">
-                        </div>
-                    </form>
-                  </div>
                 </div>
               </div>
             </div>
