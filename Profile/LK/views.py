@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+from django.forms import formset_factory, modelformset_factory
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import check_password
@@ -34,18 +36,14 @@ class Profile(UpdateView):
     success_url = reverse_lazy('profile')
     template_name = 'lk/profile.html'
 
+
 @login_required
 def profile(request):
     form = UpdateForm(request.POST, request.FILES, instance=request.user)
-    cert = Certificates.objects.filter(person=request.user) & Certificates.objects.filter(status=True)
-    # group = Group.objects.filter(name=request.user.group)
-    # if group.exists():
-    #     filial = Filial.objects.filter(title=group[0].filial)
-    #     club = Club.objects.filter(name=filial[0].club)
-    # else:
-    #     filial = 'Не выбран'
-    #     club = 'Не выбран'
-
+    try:
+        cert = Certificates.objects.get(person=request.user, status=True)
+    except Certificates.DoesNotExist:
+        cert = 0
     if request.method == 'POST':
         if form.is_valid():
             form.save()
@@ -58,24 +56,16 @@ def profile(request):
 
 @login_required
 def news(request):
-    group = Group.objects.filter(name=request.user.group)
-    if group.exists():
-        filial = Filial.objects.filter(title=group[0].filial)
-        club = Club.objects.filter(name=filial[0].club)
-        city = City.objects.filter(name=club[0].city)
-        novosti = News.objects.filter(club=club[0].pk) | News.objects.filter(for_all=True) | News.objects.filter(
-            city=city[0].pk)
-        # paginator = Paginator(novosti, 10)
-        # page_num = request.GET.get('page', 1)
-        # page_objects = paginator.get_page(page_num)
-    else:
-        novosti = News.objects.filter(for_all=True)
-        # paginator = Paginator(novosti, 10)
-        # page_num = request.GET.get('page', 1)
-        # page_objects = paginator.get_page(page_num)
+    city = City.objects.get(name=request.user.city)
+    try:
+        club = Club.objects.get(name=request.user.club)
+        news = News.objects.filter(club=club) | News.objects.filter(for_all=True) | News.objects.filter(
+            city=city)
+    except Club.DoesNotExist:
+        news = News.objects.filter(for_all=True)
     context = {
         # 'news': page_objects,
-        'news': novosti,
+        'news': news,
         'title': 'Новости',
     }
     return render(request, template_name='lk/news.html', context=context)
@@ -202,6 +192,7 @@ def stat(request):
 def create_news(request):
     if request.user.job == 'Тренер':
         filial = Filial.objects.filter(title=request.user.filial)
+        print(filial)
         club = Club.objects.filter(name=filial[0].club)
         if request.method == 'POST':
             data = request.POST.copy()
@@ -223,7 +214,7 @@ def create_news(request):
 @login_required
 def sportsmen(request):
     if request.user.job == 'Тренер':
-        sportsmen = User.objects.filter(club=request.user.club)
+        sportsmen = User.objects.filter(club=request.user.club, job='Спортсмен')|User.objects.filter(city=request.user.city, job='Спортсмен')
         return render(request, 'lk/sportsmen.html', {"sportsmen": sportsmen})
     else:
         return redirect('/profile/')
@@ -242,10 +233,68 @@ class Groups(LoginRequiredMixin, ListView):
     context_object_name = 'groups'
 
     def get_queryset(self):
-        return Group.objects.filter(filial=self.request.user.filial)
+        return Group.objects.all()
 
 
 class CreateGroup(LoginRequiredMixin, CreateView):
     form_class = GroupForm
     template_name = 'lk/create_group.html'
     success_url = reverse_lazy('groups')
+
+    def form_valid(self, form):
+        fields = form.save(commit=False)
+        fields.trainer = Trainers.objects.get(name=self.request.user)
+        fields.filial = self.request.user.filial
+        fields.save()
+        return super().form_valid(form)
+
+
+class GroupUpdate(LoginRequiredMixin, UpdateView):
+    model = Group
+    form_class = UpdateGroup
+    template_name = 'lk/group_update.html'
+    success_url = reverse_lazy('groups')
+
+
+@login_required
+def create_statistic(request):
+    if request.user.job == 'Тренер':
+        user = User.objects.filter(filial=request.user.filial, job='Спортсмен')
+        enddate = datetime.today()
+        startdate = enddate - timedelta(days=7)
+        stat = Statistic.objects.filter(user__filial__exact=request.user.filial, user__job__exact='Спортсмен', day__range=[startdate, enddate]).order_by("day")
+        formset = modelformset_factory(Statistic, form=CreateStat, extra=0)
+
+
+        if request.method == 'POST':
+
+            if request.POST.get("form_type") == 'date':
+
+                for pers in user:
+                    data = request.POST.copy()
+
+                    data['user'] = pers
+                    form_date = CreateDate(data, request.FILES)
+
+                    if form_date.is_valid():
+                        Statistic.objects.create(**form_date.cleaned_data)
+                    else:
+                        print(form_date.errors)
+            elif request.POST.get("form_type") == 'create':
+
+                formset = formset(request.POST, request.FILES, queryset=Statistic.objects.filter(user__filial__exact=request.user.filial, user__job__exact='Спортсмен', day__range=[startdate,enddate]).order_by("day"))
+                if formset.is_valid():
+                    formset.save()
+                else:
+                    print(formset.errors)
+
+        form_date = CreateDate()
+        formset = modelformset_factory(Statistic, form=CreateStat, extra=0)
+        formset = formset(queryset=Statistic.objects.filter(user__filial__exact=request.user.filial, user__job__exact='Спортсмен', day__range=[startdate,enddate]).order_by("day"))
+
+        return render(request, 'lk/statistic_admin.html', {"stat": stat, "pers": user, "form": form_date, "form_create":formset})
+    else:
+        return redirect('/profile/')
+
+
+

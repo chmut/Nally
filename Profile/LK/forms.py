@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import get_user_model
@@ -114,18 +116,21 @@ class CreateNews(forms.ModelForm):
 
 class UpdateSportsmen(forms.ModelForm):
     class Meta:
-        model = Sportsman
-        fields = ['club', 'filial', 'group', 'weight', 'passport']
+        model = User
+        fields = ['city','club', 'filial', 'group', 'weight', 'passport', 'bio']
         widgets = {
+            'city': forms.HiddenInput(),
             'group': forms.Select(attrs={'class': 'form-control'}),
-            'filial': forms.HiddenInput(),
-            'club': forms.HiddenInput(),
+            'filial': forms.Select(attrs={'class': 'form-control'}),
+            'club': forms.Select(attrs={'class': 'form-control'}),
             'weight': forms.TextInput(attrs={'class': 'form-control'}),
             'passport': forms.TextInput(attrs={'class': 'form-control'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['club'].queryset = Club.objects.filter(city=self.initial['city'])
         self.fields['filial'].queryset = Filial.objects.filter(club=self.initial['club'])
         self.fields['group'].queryset = Group.objects.filter(filial=self.initial['filial'])
 
@@ -133,14 +138,49 @@ class UpdateSportsmen(forms.ModelForm):
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ['name', 'cost', 'filial', 'trainer']
+        fields = ['name', 'cost',]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'filial': forms.Select(attrs={'class': 'form-control'}),
+            # 'filial': forms.HiddenInput(),
             'cost': forms.TextInput(attrs={'class': 'form-control'}),
-            'trainer': forms.Select(attrs={'class': 'form-control'}),
+            # 'trainer': forms.HiddenInput(),
         }
 
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
-    #     self.fields['filial'].queryset = Filial.objects.filter(club=self.user.club)
+    #     self.fields['filial'].queryset = Filial.objects.filter(club=User.objects.get())
+
+
+class UpdateGroup(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name', 'cost', 'filial', 'trainer']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'filial': forms.HiddenInput(),
+            'trainer': forms.HiddenInput(),
+            'cost': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class CreateDate(forms.ModelForm):
+    class Meta:
+        model = Statistic
+        fields = ['day', 'user']
+        widgets = {
+            'day': MyDateInput(attrs={'class':'form-select'}),
+            'user': forms.HiddenInput(),
+
+        }
+
+
+class CreateStat(forms.ModelForm):
+
+    class Meta:
+        model = Statistic
+        fields = ['day', 'status', 'user']
+        widgets = {
+            'status': forms.CheckboxInput(),
+            'user': forms.HiddenInput(),
+            'day': forms.HiddenInput()
+        }

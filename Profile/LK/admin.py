@@ -4,8 +4,8 @@ from .models import *
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('last_name', 'first_name', 'bd', 'phone')
-    search_fields = ('last_name', )
+    list_display = ('last_name', 'first_name', 'bd', 'phone', 'club','filial','group')
+    search_fields = ('last_name', 'club')
 
 
 class FilialAdmin(admin.ModelAdmin):
@@ -18,9 +18,9 @@ class TrainersAdmin(admin.ModelAdmin):
     search_fields = ('name', )
 
 
-class SportsmanAdmin(admin.ModelAdmin):
-    list_display = ('user', 'filial', 'group', 'phone_dop', 'weight', 'passport', 'club')
-    search_fields = ('user', 'filial', 'club')
+# class SportsmanAdmin(admin.ModelAdmin):
+#     list_display = ('user', 'filial', 'group', 'phone_dop', 'weight', 'passport')
+#     search_fields = ('user', 'filial')
 
 
 class CertAdmin(admin.ModelAdmin):
@@ -74,4 +74,4 @@ admin.site.register(City, CityAdmin)
 admin.site.register(News, NewsAdmin)
 admin.site.register(Orders, OrdersAdmin)
 admin.site.register(Statistic, StatisticAdmin)
-admin.site.register(Sportsman, SportsmanAdmin)
+# admin.site.register(Sportsman, SportsmanAdmin)

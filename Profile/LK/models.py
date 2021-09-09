@@ -8,19 +8,21 @@ class User(AbstractUser):
         ('Спортсмен', 'Спортсмен'),
         ('Тренер', 'Тренер'),
     )
+    mid_name = models.CharField(blank=True, null=True, max_length=50, verbose_name='Отчество')
     email = models.EmailField(unique=True)
-    # group = models.ForeignKey('Group', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Группа')
-    # filial = models.ForeignKey('Filial', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Филиал')
-    # club = models.ForeignKey('Club', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Клуб')
+    group = models.ForeignKey('Group', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Группа')
+    filial = models.ForeignKey('Filial', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Филиал')
+    club = models.ForeignKey('Club', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Клуб')
     city = models.ForeignKey('City', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Город')
     bd = models.DateField(auto_now=False, auto_now_add=False, null=True, verbose_name='Дата рождения спортсмена')
     avatar = models.ImageField(upload_to='avatar/%Y/%m/%d/', null=True, blank=True, verbose_name='Аватарка')
     phone = models.IntegerField(null=True, verbose_name='Телефон')
-    # phone_dop = models.IntegerField(null=True, blank=True,verbose_name='Дополнительный телефон')
+    phone_dop = models.IntegerField(null=True, blank=True,verbose_name='Дополнительный телефон')
     first_name_m = models.CharField(blank=True, null=True, max_length=50, verbose_name='Имя родителя')
+    mid_name_m = models.CharField(blank=True, null=True, max_length=50, verbose_name='Отчество родителя')
     last_name_m = models.CharField(blank=True, null=True, max_length=50, verbose_name='Фамилия родителя')
-    # weight = models.IntegerField(blank=True, null=True, verbose_name='Вес спортсмена')
-    # passport = models.CharField(blank=True, null=True, verbose_name='Номер паспорта спортсмена', max_length=100)
+    weight = models.IntegerField(blank=True, null=True, verbose_name='Вес спортсмена')
+    passport = models.CharField(blank=True, null=True, verbose_name='Номер паспорта спортсмена', max_length=100)
     bio = models.TextField(null=True, blank=True, max_length=1000, verbose_name='Описание')
     job = models.CharField(max_length=20, choices=jobs, default=jobs[0][0], verbose_name='Должность')
 
@@ -38,8 +40,9 @@ class Sportsman(models.Model):
     filial = models.ForeignKey('Filial', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Филиал')
     club = models.ForeignKey('Club', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Клуб')
     phone_dop = models.IntegerField(null=True, blank=True, verbose_name='Дополнительный телефон')
-    # first_name_m = models.CharField(blank=True, null=True, max_length=50, verbose_name='Имя родителя')
-    # last_name_m = models.CharField(blank=True, null=True, max_length=50, verbose_name='Фамилия родителя')
+    first_name_m = models.CharField(blank=True, null=True, max_length=50, verbose_name='Имя родителя')
+    mid_name_m = models.CharField(blank=True, null=True, max_length=50, verbose_name='Отчество родителя')
+    last_name_m = models.CharField(blank=True, null=True, max_length=50, verbose_name='Фамилия родителя')
     weight = models.IntegerField(blank=True, null=True, verbose_name='Вес спортсмена')
     passport = models.CharField(blank=True, null=True, verbose_name='Номер паспорта спортсмена', max_length=100)
 
@@ -73,7 +76,7 @@ class Filial(models.Model):
 
 class Trainers(models.Model):
     name = models.OneToOneField('User', on_delete=models.PROTECT, primary_key=True, verbose_name='ФИО')
-    club = models.ForeignKey('Club', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Клуб')
+    # club = models.ForeignKey('Club', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Клуб')
     salary = models.IntegerField(null=True, verbose_name='Зарплата')
 
     class Meta:
@@ -181,6 +184,7 @@ class News(models.Model):
     updated_at = models.DateField(auto_now=True, verbose_name='Обновлено')
     # Тип Даты с автоматическим указанием обновления даты и времени
     photo = models.ImageField(upload_to='photos/%Y/%m/%d/', verbose_name='Изображение', blank=True)
+    author = models.ForeignKey('User', blank=True, null=True, on_delete=models.PROTECT, verbose_name='Автор')
     for_all = models.BooleanField(default=False, verbose_name='Для всех')
 
     def get_absolute_url(self):
@@ -244,7 +248,7 @@ class Orders(models.Model):
     size = models.CharField(max_length=30, choices=sizes, blank=True, verbose_name='Размер')
     status = models.CharField(max_length=20, choices=status, default='Ожидает оплаты', verbose_name='Статус заказа', blank=True)
     color = models.CharField(max_length=40, choices=colors, blank=True, verbose_name='Цвет')
-    client = models.ForeignKey('User',blank=True, null=True,  on_delete=models.PROTECT, verbose_name='Клиент')
+    client = models.ForeignKey('User', blank=True, null=True,  on_delete=models.PROTECT, verbose_name='Клиент')
 
     class Meta:
         verbose_name = 'Заказ'
@@ -255,14 +259,15 @@ class Orders(models.Model):
 
 
 class Statistic(models.Model):
-    user = models.ForeignKey('Sportsman', blank=True, null=True, verbose_name='Спортсмен', on_delete=models.PROTECT)
-    day = models.DateField(verbose_name='Дата')
+    # user = models.ForeignKey('Sportsman', blank=True, null=True, verbose_name='Спортсмен', on_delete=models.PROTECT)
+    user = models.ForeignKey('User', null=True, verbose_name='Спортсмен', on_delete=models.PROTECT)
+    day = models.DateField(verbose_name='Дата', blank=True, null=True)
     status = models.BooleanField(default=False, verbose_name='Посещение')
 
     class Meta:
         verbose_name = 'Посещаемость'
         verbose_name_plural = 'Посещаемость'
-        ordering = ['-id']
+        ordering = ['day']
 
     def __str__(self):
-        return self.user
+        return str(self.user)

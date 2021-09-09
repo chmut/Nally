@@ -16,10 +16,12 @@ urlpatterns = [
     path('create_order', create_order, name='create_order'),
     path('orders', orders, name='orders'),
     path('statistic', stat, name='statistic'),
+    path('statistic_admin', create_statistic, name='statistic_admin'),
     path('create_news', create_news, name='create_news'),
     path('sportsmen', sportsmen, name='sportsmen'),
     path('sportsmen/<int:pk>', SportsmenUpdate.as_view(), name='sportsmen_update'),
     path('groups', Groups.as_view(), name='groups'),
     path('groups/new', CreateGroup.as_view(), name='create_group'),
+    path('groups/<int:pk>', GroupUpdate.as_view(), name='group_update'),
     path('favicon.ico', RedirectView.as_view(url='/static/favicon.png'), name='favicon'),
 ]

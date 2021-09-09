@@ -37,6 +37,7 @@
                 <td>{{group.cost}}</td>
                 <td>{{group.filial}}</td>
                 <td>{{group.trainer}}</td>
+                  <td><a href="{%url 'group_update' pk=group.id%}"> Изменить</a></td>
               </tr>
             {%endfor%}
             </tbody>

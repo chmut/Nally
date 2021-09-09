@@ -1,0 +1,18 @@
+{%extends 'base.html'%}
+{%block title%}
+Группы
+{%endblock%}
+{%block content%}
+<div class="content-wrapper">
+    <div class="content-header sty-one">
+      <h1 class="text-black">{{group.name}}</h1>
+    </div>
+<div class="content">
+    <form method="post">
+        {% csrf_token %}
+      {{form.as_p}}
+        <input type="submit" class="btn btn-success" value="Изменить">
+    </form>
+</div>
+</div>
+    {%endblock%}
