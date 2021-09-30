@@ -48,6 +48,9 @@
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li> <a href="{%url 'profile'%}"> <i class="fa fa-user-o"></i> <span>Профиль</span></a></li>
+
+        <li> <a href="{%url 'news'%}"> <i class="fa fa-briefcase"></i> <span>Новости</span> </a></li>
+        {%if request.user.job == 'Спортсмен'%}
         <li class="treeview"> <a href="#"> <i class="fa fa-envelope-o "></i> <span>Заказы</span>
         <span class="pull-right-container">
           <i class="fa fa-angle-left pull-right">
@@ -63,14 +66,12 @@
             </li>
           </ul>
         </li>
-        <li> <a href="{%url 'news'%}"> <i class="fa fa-briefcase"></i> <span>Новости</span> </a></li>
-        {%if request.user.job == 'Спортсмен'%}
         <li> <a href="{%url 'statistic'%}"> <i class="fa fa-calendar"></i> <span>Посещаемость</span> </a></li>
         {%elif request.user.job == 'Тренер'%}
-        <li class="header">Администрирование</li>
         <li> <a href="{%url 'groups'%}"> <i class="fa fa-briefcase"></i> <span>Группы</span> </a></li>
         <li> <a href="{%url 'sportsmen'%}"> <i class="fa fa-briefcase"></i> <span>Список спортсменов</span> </a></li>
         <li> <a href="{%url 'statistic_admin'%}"> <i class="fa fa-briefcase"></i> <span>Посещаемость</span> </a></li>
+        <li> <a href="/"> <i class="fa fa-briefcase"></i> <span>Заказы</span> </a></li>
         {%endif%}
         <li> <a href="{%url 'logout'%}"> <i class="fa fa-sign-out"></i> <span>Выйти</span> </a></li>
       </ul>

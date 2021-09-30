@@ -4,76 +4,20 @@
 {%endblock%}
 {%block content%}
 <div class="content-wrapper">
+
     <div class="content-header sty-one">
       <h1 class="text-black">Посещаемость</h1>
     </div>
 <div class="content">
+        <ul class="nav nav-tabs customtab2" role="tablist">
+      {%for group in groups%}
+      <li class="nav-item">
+        <a class="nav-link" role="tab" href="{%url 'group_stat' group.pk%}">{{group}}</a></li>
+      {%endfor%}
+    </ul>
       <div class="info-box">
         <h4 class="text-black">Посещения</h4>
-        <div>
-          <form method="post" id="date">
-          {% csrf_token %}
-            <input type="hidden" name="form_type" value="date">
-          {{form.as_table}}
-            <input type="submit" class="btn btn-success" value="Добавить дату">
-          </form>
-        </div>
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Спортсмен</th>
-                {%for stat1 in pers%}
-                  {%if forloop.first%}
-                    {%for stat in stat%}
 
-                      {%if stat.user == stat1%}
-
-                        <th scope="col">{{stat.day}}</th>
-
-                      {%endif%}
-                    {%endfor%}
-                  {%endif%}
-                {%endfor%}
-              </tr>
-            </thead>
-            <tbody>
-            <form method="post">
-
-              {% csrf_token %}
-
-                <input type="hidden" name="form_type" value="create">
-                {{ form_create.management_form }}
-
-              {%for stat1 in pers%}
-
-              <tr>
-
-                <td>{{stat1.first_name}} {{stat1.last_name}}</td>
-
-
-
-
-                    {%for form in form_create%}
-
-                          {%if form.user.value == stat1.pk%}
-
-
-                       <td>{{form.status}}</td>
-                {{form.id}} {{form.user}} {{form.day}}
-
-
-                          {%endif%}
-                    {%endfor%}
-
-                  </tr>
-                {%endfor%}
-
-              <td><input type="submit" class="btn btn-success" value="Сохранить"></td>
-            </form>
-            </tbody>
-          </table>
-        </div>
       </div>
 </div>
 </div>

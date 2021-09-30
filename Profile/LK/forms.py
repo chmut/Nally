@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
 from django.contrib.auth import get_user_model
 from .models import *
 
@@ -180,7 +180,15 @@ class CreateStat(forms.ModelForm):
         model = Statistic
         fields = ['day', 'status', 'user']
         widgets = {
-            'status': forms.CheckboxInput(),
+            'status': forms.CheckboxInput(attrs={'class':'form-control-input'}),
             'user': forms.HiddenInput(),
             'day': forms.HiddenInput()
         }
+
+
+class ChangePassword(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["old_password"].widget = forms.PasswordInput(attrs={"class": "form-control"})
+        self.fields["new_password1"].widget = forms.PasswordInput(attrs={"class": "form-control"})
+        self.fields["new_password2"].widget = forms.PasswordInput(attrs={"class": "form-control"})

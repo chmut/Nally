@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+
+from django.contrib.auth import update_session_auth_hash
 from django.forms import formset_factory, modelformset_factory
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import PasswordChangeForm
@@ -32,26 +34,36 @@ class SignUpView(CreateView):
 
 
 class Profile(UpdateView):
+    model = User
     form_class = UpdateForm
-    success_url = reverse_lazy('profile')
-    template_name = 'lk/profile.html'
+    success_url = reverse_lazy('settings')
+    template_name = 'lk/settings.html'
 
 
 @login_required
 def profile(request):
     form = UpdateForm(request.POST, request.FILES, instance=request.user)
+    password_form = ChangePassword(request.user, request.POST)
     try:
         cert = Certificates.objects.get(person=request.user, status=True)
     except Certificates.DoesNotExist:
         cert = 0
     if request.method == 'POST':
-        if form.is_valid():
-            form.save()
-        else:
-            print(form.errors)
-    form = UpdateForm()
-
-    return render(request, 'lk/profile.html', {"form": form, "cert": cert})
+        if request.POST.get("form_type") == 'edit_form':
+            if form.is_valid():
+                form.save()
+            else:
+                print(form.errors)
+        elif request.POST.get("form_type") == 'pass_form':
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+            else:
+                print(password_form.errors)
+    else:
+        form = UpdateForm(instance=request.user)
+        password_form = ChangePassword(request.user, request.POST)
+    return render(request, 'lk/profile.html', {"form": form, "cert": cert, "password_form":password_form})
 
 
 @login_required
@@ -214,8 +226,19 @@ def create_news(request):
 @login_required
 def sportsmen(request):
     if request.user.job == 'Тренер':
-        sportsmen = User.objects.filter(club=request.user.club, job='Спортсмен')|User.objects.filter(city=request.user.city, job='Спортсмен')
-        return render(request, 'lk/sportsmen.html', {"sportsmen": sportsmen})
+        groups = Group.objects.filter(filial=request.user.filial)
+        sportsmen = User.objects.filter(city=request.user.city, club=None, job='Спортсмен')
+        return render(request, 'lk/sportsmen.html', {"sportsmen": sportsmen, "groups": groups})
+    else:
+        return redirect('/profile/')
+
+
+def sportsmen_group(request, group_id):
+    if request.user.job == 'Тренер':
+        groups = Group.objects.filter(filial=request.user.filial)
+        group = Group.objects.get(pk=group_id)
+        sportsmen = User.objects.filter(group_id=group_id, job='Спортсмен')
+        return render(request, 'lk/sportsmen_group.html', {"sportsmen": sportsmen, "groups": groups, "group":group})
     else:
         return redirect('/profile/')
 
@@ -260,6 +283,7 @@ class GroupUpdate(LoginRequiredMixin, UpdateView):
 def create_statistic(request):
     if request.user.job == 'Тренер':
         user = User.objects.filter(filial=request.user.filial, job='Спортсмен')
+        groups = Group.objects.filter(filial=request.user.filial)
         enddate = datetime.today()
         startdate = enddate - timedelta(days=7)
         stat = Statistic.objects.filter(user__filial__exact=request.user.filial, user__job__exact='Спортсмен', day__range=[startdate, enddate]).order_by("day")
@@ -291,10 +315,69 @@ def create_statistic(request):
         form_date = CreateDate()
         formset = modelformset_factory(Statistic, form=CreateStat, extra=0)
         formset = formset(queryset=Statistic.objects.filter(user__filial__exact=request.user.filial, user__job__exact='Спортсмен', day__range=[startdate,enddate]).order_by("day"))
+        context = {
+            "stat": stat,
+            "pers": user,
+            "form": form_date,
+            "form_create": formset,
+            "groups": groups,
+        }
 
-        return render(request, 'lk/statistic_admin.html', {"stat": stat, "pers": user, "form": form_date, "form_create":formset})
+        return render(request, 'lk/statistic_admin.html', context)
     else:
         return redirect('/profile/')
 
 
+def get_group_stat(request, group_id):
+    if request.user.job == 'Тренер':
+        user = User.objects.filter(group_id=group_id, job='Спортсмен')
+        groups = Group.objects.filter(filial=request.user.filial)
+        enddate = datetime.today()
+        startdate = enddate - timedelta(days=7)
+        stat = Statistic.objects.filter(user__group__exact=group_id, user__job__exact='Спортсмен',
+                                        day__range=[startdate, enddate]).order_by("day")
+        group = Group.objects.get(pk=group_id)
+        formset = modelformset_factory(Statistic, form=CreateStat, extra=0)
 
+        if request.method == 'POST':
+
+            if request.POST.get("form_type") == 'date':
+
+                for pers in user:
+                    data = request.POST.copy()
+
+                    data['user'] = pers
+                    form_date = CreateDate(data, request.FILES)
+
+                    if form_date.is_valid():
+                        Statistic.objects.create(**form_date.cleaned_data)
+                    else:
+                        print(form_date.errors)
+            elif request.POST.get("form_type") == 'create':
+
+                formset = formset(request.POST, request.FILES,
+                                  queryset=Statistic.objects.filter(user__group__exact=group_id,
+                                                                    user__job__exact='Спортсмен',
+                                                                    day__range=[startdate, enddate]).order_by("day"))
+                if formset.is_valid():
+                    formset.save()
+                else:
+                    print(formset.errors)
+
+        form_date = CreateDate()
+        formset = modelformset_factory(Statistic, form=CreateStat, extra=0)
+        formset = formset(
+            queryset=Statistic.objects.filter(user__group__exact=group_id, user__job__exact='Спортсмен',
+                                              day__range=[startdate, enddate]).order_by("day"))
+        context = {
+            "stat": stat,
+            "pers": user,
+            "form": form_date,
+            "form_create": formset,
+            "groups": groups,
+            "group":group,
+        }
+
+        return render(request, 'lk/statistic_group.html', context)
+    else:
+        return redirect('/profile/')
