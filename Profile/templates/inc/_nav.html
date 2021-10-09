@@ -67,11 +67,17 @@
           </ul>
         </li>
         <li> <a href="{%url 'statistic'%}"> <i class="fa fa-calendar"></i> <span>Посещаемость</span> </a></li>
-        {%elif request.user.job == 'Тренер'%}
+
+
+        {%elif request.user.job != 'Спортсмен' or request.user.job != 'Ассистент'%}
+        {%if request.user.job == 'Руководитель клуба'%}
+        <li> <a href="{%url 'groups'%}"> <i class="fa fa-briefcase"></i> <span>Клуб</span> </a></li>
+        {%else%}
         <li> <a href="{%url 'groups'%}"> <i class="fa fa-briefcase"></i> <span>Группы</span> </a></li>
+        {%endif%}
         <li> <a href="{%url 'sportsmen'%}"> <i class="fa fa-briefcase"></i> <span>Список спортсменов</span> </a></li>
         <li> <a href="{%url 'statistic_admin'%}"> <i class="fa fa-briefcase"></i> <span>Посещаемость</span> </a></li>
-        <li> <a href="/"> <i class="fa fa-briefcase"></i> <span>Заказы</span> </a></li>
+
         {%endif%}
         <li> <a href="{%url 'logout'%}"> <i class="fa fa-sign-out"></i> <span>Выйти</span> </a></li>
       </ul>

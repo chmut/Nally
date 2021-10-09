@@ -6,7 +6,11 @@ from django.urls import reverse
 class User(AbstractUser):
     jobs = (
         ('Спортсмен', 'Спортсмен'),
+        ('Ассистент', 'Ассистент'),
         ('Тренер', 'Тренер'),
+        ('Руководитель региона', 'Руководитель региона'),
+        ('Руководитель клуба', 'Руководитель клуба'),
+        ('Руководитель федерации', 'Руководитель федерации'),
     )
     mid_name = models.CharField(blank=True, null=True, max_length=50, verbose_name='Отчество')
     email = models.EmailField(unique=True)
@@ -24,7 +28,7 @@ class User(AbstractUser):
     weight = models.IntegerField(blank=True, null=True, verbose_name='Вес спортсмена')
     passport = models.CharField(blank=True, null=True, verbose_name='Номер паспорта спортсмена', max_length=100)
     bio = models.TextField(null=True, blank=True, max_length=1000, verbose_name='Описание')
-    job = models.CharField(max_length=20, choices=jobs, default=jobs[0][0], verbose_name='Должность')
+    job = models.CharField(max_length=50, choices=jobs, default=jobs[0][0], verbose_name='Должность')
 
     class Meta:
         verbose_name = 'Пользователь'

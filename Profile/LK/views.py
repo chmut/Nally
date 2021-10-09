@@ -203,13 +203,13 @@ def stat(request):
 @login_required
 def create_news(request):
     if request.user.job == 'Тренер':
-        filial = Filial.objects.filter(title=request.user.filial)
-        print(filial)
-        club = Club.objects.filter(name=filial[0].club)
+        # filial = Filial.objects.filter(title=request.user.filial)
+        # club = Club.objects.filter(name=filial[0].club)
+        club = Club.objects.get(name=request.user.club)
         if request.method == 'POST':
             data = request.POST.copy()
-            data['club'] = Club.objects.get(name=filial[0].club)
-            data['city'] = City.objects.get(name=club[0].city)
+            data['club'] = Club.objects.get(name=request.user.club)
+            data['city'] = City.objects.get(name=club.city)
             form = CreateNews(data, request.FILES)
             if form.is_valid():
                 news = News.objects.create(**form.cleaned_data)
@@ -219,6 +219,22 @@ def create_news(request):
         else:
             form = CreateNews()
         return render(request, 'lk/create_news.html', {"form": form})
+    elif request.user.job == 'Руководитель клуба':
+        club = Club.objects.get(name=request.user.club)
+        if request.method == 'POST':
+            data = request.POST.copy()
+            data['club'] = Club.objects.get(name=request.user.club)
+            data['city'] = City.objects.get(name=club.city)
+            form = CreateNews(data, request.FILES)
+            if form.is_valid():
+                news = News.objects.create(**form.cleaned_data)
+                return redirect(news)
+            else:
+                print(form.errors)
+        else:
+            form = CreateNews()
+        return render(request, 'lk/create_news.html', {"form": form})
+
     else:
         return redirect('/news/')
 
@@ -229,18 +245,34 @@ def sportsmen(request):
         groups = Group.objects.filter(filial=request.user.filial)
         sportsmen = User.objects.filter(city=request.user.city, club=None, job='Спортсмен')
         return render(request, 'lk/sportsmen.html', {"sportsmen": sportsmen, "groups": groups})
+    if request.user.job == 'Руководитель клуба':
+        filials =Filial.objects.filter(club=request.user.club)
+        sportsmen = User.objects.filter(city=request.user.city, club=None, job='Спортсмен')
+        return render(request, 'lk/sportsmen.html', {"sportsmen": sportsmen, "filials": filials})
     else:
-        return redirect('/profile/')
+        return redirect('/')
 
 
+@login_required
 def sportsmen_group(request, group_id):
-    if request.user.job == 'Тренер':
+    if request.user.job != 'Спортсмен' or request.user.job != 'Ассистент':
         groups = Group.objects.filter(filial=request.user.filial)
         group = Group.objects.get(pk=group_id)
         sportsmen = User.objects.filter(group_id=group_id, job='Спортсмен')
         return render(request, 'lk/sportsmen_group.html', {"sportsmen": sportsmen, "groups": groups, "group":group})
     else:
-        return redirect('/profile/')
+        return redirect('/')
+
+
+@login_required
+def sportsmen_filial(request, filial_id):
+    if request.user.job == 'Руководитель клуба':
+        filials = Filial.objects.filter(club=request.user.club)
+        filial = Filial.objects.get(pk=filial_id)
+        sportsmen = User.objects.filter(filial_id=filial_id, job='Спортсмен')
+        return render(request, 'lk/sportsmen_filial.html', {"sportsmen": sportsmen, "filials": filials, "filial":filial})
+    else:
+        return redirect('/')
 
 
 class SportsmenUpdate(LoginRequiredMixin, UpdateView):
@@ -250,13 +282,28 @@ class SportsmenUpdate(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('sportsmen')
 
 
-class Groups(LoginRequiredMixin, ListView):
-    model = Group
-    template_name = 'lk/groups.html'
-    context_object_name = 'groups'
+@login_required
+def groups(request):
+    if request.user.job == 'Тренер':
+        groups = Group.objects.filter(filial=request.user.filial)
+        return render(request, 'lk/groups.html', {"groups": groups})
+    elif request.user.job == 'Руководитель клуба':
+        groups = Group.objects.filter(filial__club__exact=request.user.club)
+        filials = Filial.objects.filter(club=request.user.club)
+        return render(request, 'lk/groups.html', {"groups": groups, "filials":filials})
+    else:
+        return redirect('/')
 
-    def get_queryset(self):
-        return Group.objects.all()
+
+@login_required
+def filials(request, filial_id):
+    if request.user.job == 'Руководитель клуба':
+        filial = Filial.objects.get(pk=filial_id)
+        groups = Group.objects.filter(filial=filial)
+        filials = Filial.objects.filter(club=request.user.club)
+        return render(request, 'lk/filial.html', {"groups": groups, "filials":filials, "filial":filial})
+    else:
+        return redirect('/')
 
 
 class CreateGroup(LoginRequiredMixin, CreateView):
@@ -281,7 +328,7 @@ class GroupUpdate(LoginRequiredMixin, UpdateView):
 
 @login_required
 def create_statistic(request):
-    if request.user.job == 'Тренер':
+    if request.user.job != 'Спортсмен' or request.user.job != 'Ассистент':
         user = User.objects.filter(filial=request.user.filial, job='Спортсмен')
         groups = Group.objects.filter(filial=request.user.filial)
         enddate = datetime.today()
@@ -325,11 +372,11 @@ def create_statistic(request):
 
         return render(request, 'lk/statistic_admin.html', context)
     else:
-        return redirect('/profile/')
+        return redirect('/')
 
 
 def get_group_stat(request, group_id):
-    if request.user.job == 'Тренер':
+    if request.user.job != 'Спортсмен' or request.user.job != 'Ассистент':
         user = User.objects.filter(group_id=group_id, job='Спортсмен')
         groups = Group.objects.filter(filial=request.user.filial)
         enddate = datetime.today()
@@ -380,4 +427,4 @@ def get_group_stat(request, group_id):
 
         return render(request, 'lk/statistic_group.html', context)
     else:
-        return redirect('/profile/')
+        return redirect('/')

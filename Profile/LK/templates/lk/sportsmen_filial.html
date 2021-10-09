@@ -10,21 +10,13 @@
 <div class="content">
    <ul class="nav nav-tabs customtab2" role="tablist">
      <li class="nav-item">
-        <a class="nav-link active"  role="tab" href="{%url 'sportsmen'%}">Новые пользователи</a>
+        <a class="nav-link "  role="tab" href="{%url 'sportsmen'%}">Новые пользователи</a>
       </li>
-       {%if request.user.job == 'Тренер'%}
-        {%for group in groups%}
-      <li class="nav-item">
-        <a class="nav-link"  role="tab" href="{%url 'sportsmen_group' group.pk%}">{{group}}</a>
-      </li>
-      {%endfor%}
-       {%elif request.user.job == 'Руководитель клуба'%}
-       {%for filial in filials%}
+      {%for filial in filials%}
       <li class="nav-item">
         <a class="nav-link"  role="tab" href="{%url 'sportsmen_filial' filial.pk%}">{{filial}}</a>
       </li>
-       {%endfor%}
-       {%endif%}
+      {%endfor%}
     </ul>
       <div class="info-box">
         <h4 class="text-black">Спортсмены</h4>
@@ -56,5 +48,10 @@
       </div>
 </div>
 </div>
-
+<script type="text/javascript">
+  $(document).ready(function(){
+    var link = window.location.pathname;
+    $('.customtab2 li a[href="'+link+'"]').addClass('active');
+  });
+</script>
     {%endblock%}

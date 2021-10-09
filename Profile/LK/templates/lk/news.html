@@ -8,7 +8,7 @@
             <div class="col-6">
             <h1 class="text-black">Новости</h1>
         </div>
-            {%if request.user.job == 'Тренер'%}
+            {%if request.user.job != 'Спортсмен' or request.job.user != 'Ассистент'%}
             <div class="col-3 offset-md-3">
                 <a href="{%url 'create_news'%}" class="btn btn-rounded btn-warning">Добавить новость</a>
             </div>

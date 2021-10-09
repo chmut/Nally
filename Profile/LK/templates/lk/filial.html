@@ -1,11 +1,7 @@
 {%extends 'base.html'%}
 
 {%block title%}
-{%if request.user.job == 'Руководитель клуба'%}
 Клуб
-{%else%}
-Группы
-{%endif%}
 {%endblock%}
 
 {%block content%}
@@ -13,11 +9,7 @@
     <div class="content-header sty-one">
         <div class="row">
             <div class="col-6">
-                {%if request.user.job == 'Руководитель клуба'%}
             <h1 class="text-black">Клуб</h1>
-                {%else%}
-                <h1 class="text-black">Группы</h1>
-                {%endif%}
         </div>
 
             <div class="col-3 offset-md-3">
@@ -27,17 +19,17 @@
         </div>
     </div>
 <div class="content">
-    {%if request.user.job == 'Руководитель клуба'%}
+
     <ul class="nav nav-tabs customtab2" role="tablist">
         <li class="nav-item">
-        <a class="nav-link active"  role="tab" href="{%url 'groups'%}">Все группы</a>
+        <a class="nav-link"  role="tab" href="{%url 'groups'%}">Все группы</a>
       </li>
       {%for filial in filials%}
       <li class="nav-item">
         <a class="nav-link"  role="tab" href="{%url 'filial' filial.pk%}">{{filial}}</a></li>
       {%endfor%}
     </ul>
-    {%endif%}
+
       <div class="info-box">
         <h4 class="text-black">Группы</h4>
         <div class="table-responsive">
@@ -67,4 +59,10 @@
       </div>
 </div>
 </div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    var link = window.location.pathname;
+    $('.customtab2 li a[href="'+link+'"]').addClass('active');
+  });
+</script>
     {%endblock%}
