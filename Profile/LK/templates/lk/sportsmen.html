@@ -4,21 +4,30 @@
 {%endblock%}
 {%block content%}
 <div class="content-wrapper">
-    <div class="content-header sty-one">
-      <h1 class="text-black">Спортсмены</h1>
+        <div class="content-header sty-one">
+        <div class="row">
+            <div class="col-6">
+            <h1 class="text-black">Спортсмены</h1>
+        </div>
+            {%if request.user.job != 'Спортсмен' and request.user.job != 'Ассистент'%}
+            <div class="col-3 offset-md-3">
+                <a href="{%url 'create_sportsman'%}" class="btn btn-rounded btn-warning">Добавить спортсмена</a>
+            </div>
+            {%endif%}
+        </div>
     </div>
 <div class="content">
    <ul class="nav nav-tabs customtab2" role="tablist">
      <li class="nav-item">
-        <a class="nav-link active"  role="tab" href="{%url 'sportsmen'%}">Новые пользователи</a>
+        <a class="nav-link active"  role="tab" href="{%url 'sportsmen'%}">Все спортсмены</a>
       </li>
-       {%if request.user.job == 'Тренер'%}
+       {%if request.user.trainer.job == 'Тренер'%}
         {%for group in groups%}
       <li class="nav-item">
         <a class="nav-link"  role="tab" href="{%url 'sportsmen_group' group.pk%}">{{group}}</a>
       </li>
       {%endfor%}
-       {%elif request.user.job == 'Руководитель клуба'%}
+       {%elif request.user.trainer.job == 'Руководитель клуба'%}
        {%for filial in filials%}
       <li class="nav-item">
         <a class="nav-link"  role="tab" href="{%url 'sportsmen_filial' filial.pk%}">{{filial}}</a>
@@ -34,7 +43,6 @@
             <thead>
               <tr>
                 <th scope="col">ФИО</th>
-                <th scope="col">Логин</th>
                 <th scope="col">Филиал</th>
                 <th scope="col">Группа</th>
               </tr>
@@ -42,12 +50,41 @@
             <tbody>
             {%for sportsmen in sportsmen%}
               <tr>
-                <td>{{sportsmen.first_name}} {{sportsmen.mid_name}} {{sportsmen.last_name}}</td>
-                <td>{{sportsmen.username}}</td>
+                <td>{{sportsmen.last_name}} {{sportsmen.first_name}} {{sportsmen.mid_name}}</td>
                 <td>{{sportsmen.filial}}</td>
                 <td>{{sportsmen.group}}</td>
 
                 <td><a href="{%url 'sportsmen_update' pk=sportsmen.id%}"> Изменить</a></td>
+                  <td>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    Удалить
+                </button>
+
+                  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+               <div class="modal-header">
+               <h5 class="modal-title" id="exampleModalLabel">Удалить?</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Удалить спортсмена "{{sportsmen.last_name}} {{sportsmen.first_name}} {{sportsmen.mid_name}}"? Это действие нельзя отменить.
+            </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+          <form action="{%url 'delete_sportsman' pk=sportsmen.pk%}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-primary">Удалить</button>
+            </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+</td>
               </tr>
             {%endfor%}
             </tbody>

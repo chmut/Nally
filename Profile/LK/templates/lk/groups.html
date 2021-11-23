@@ -1,7 +1,7 @@
 {%extends 'base.html'%}
 
 {%block title%}
-{%if request.user.job == 'Руководитель клуба'%}
+{%if request.user.trainer.job == 'Руководитель клуба'%}
 Клуб
 {%else%}
 Группы
@@ -13,33 +13,68 @@
     <div class="content-header sty-one">
         <div class="row">
             <div class="col-6">
-                {%if request.user.job == 'Руководитель клуба'%}
+                {%if request.user.trainer.job == 'Руководитель клуба'%}
             <h1 class="text-black">Клуб</h1>
                 {%else%}
                 <h1 class="text-black">Группы</h1>
                 {%endif%}
         </div>
+            {%if request.user.trainer.job == 'Руководитель клуба'%}
 
-            <div class="col-3 offset-md-3">
-                <a href="{%url 'create_group'%}" class="btn btn-rounded btn-warning">Добавить группу</a>
+            <div class="col-6">
+                <a href="{%url 'personal'%}" class="btn btn-rounded btn-warning">Персонал</a>
             </div>
-
+{%endif%}
         </div>
     </div>
 <div class="content">
-    {%if request.user.job == 'Руководитель клуба'%}
     <ul class="nav nav-tabs customtab2" role="tablist">
         <li class="nav-item">
-        <a class="nav-link active"  role="tab" href="{%url 'groups'%}">Все группы</a>
+        <a class="nav-link active"  role="tab" href="{%url 'groups'%}">Все филиалы</a>
       </li>
       {%for filial in filials%}
       <li class="nav-item">
         <a class="nav-link"  role="tab" href="{%url 'filial' filial.pk%}">{{filial}}</a></li>
       {%endfor%}
     </ul>
-    {%endif%}
+
+    {%if request.user.trainer.job == 'Руководитель клуба'%}
       <div class="info-box">
+        <h4 class="text-black">Филиалы</h4>
+        <div class="table-responsive">
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Название</th>
+                <th scope="col">Адрес</th>
+                <th scope="col">Аренда</th>
+                <th scope="col">Тренер</th>
+              </tr>
+            </thead>
+            <tbody>
+            {%for group in filials%}
+              <tr>
+                <td>{{group.title}}</td>
+                <td>{{group.address}}</td>
+                <td>{{group.payment}} руб/{{group.type_of_pay}}</td>
+                <td>{{group.trainer.last_name}} {{group.trainer.first_name}} {{group.trainer.mid_name}}</td>
+                  <td><a href="{%url 'filial_update' pk=group.id%}"> Изменить</a></td>
+              </tr>
+            {%endfor%}
+            <tr>
+                <td><a href="{%url 'create_filial'%}" class="btn btn-rounded btn-warning">Добавить филиал</a></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    {%else%}
+    <div class="info-box">
+
         <h4 class="text-black">Группы</h4>
+
         <div class="table-responsive">
 
           <table class="table">
@@ -57,14 +92,16 @@
                 <td>{{group.name}}</td>
                 <td>{{group.cost}}</td>
                 <td>{{group.filial}}</td>
-                <td>{{group.trainer}}</td>
+                <td>{{group.trainer.last_name}} {{group.trainer.first_name}} {{group.trainer.mid_name}}</td>
                   <td><a href="{%url 'group_update' pk=group.id%}"> Изменить</a></td>
               </tr>
             {%endfor%}
+
             </tbody>
           </table>
         </div>
       </div>
+    {%endif%}
 </div>
 </div>
     {%endblock%}

@@ -1,6 +1,6 @@
 {%extends 'base.html'%}
 {%block title%}
-Список спортсменов
+Заказы
 {%endblock%}
 {%block content%}
 <div class="content-wrapper">
@@ -9,11 +9,18 @@
     </div>
 <div class="content">
    <ul class="nav nav-tabs customtab2" role="tablist">
-      {%for group in groups%}
-      <li class="nav-item">
-        <a class="nav-link"  role="tab" href="{%url 'orders_group' group.pk%}">{{group}}</a>
-      </li>
-      {%endfor%}
+       <li class="nav-item ">
+            <a class="nav-link"  role="tab" href="{%url 'orders_admin'%}">Все заказы</a>
+       </li>
+       <li class="nav-item ">
+            <a class="nav-link"  role="tab" href="{%url 'orders_pay'%}">Ожидает оплаты</a>
+       </li>
+       <li class="nav-item ">
+            <a class="nav-link"  role="tab" href="{%url 'orders_admin_way'%}">В пути</a>
+       </li>
+       <li class="nav-item ">
+            <a class="nav-link"  role="tab" href="{%url 'orders_admin_del'%}">Доставлено</a>
+       </li>
     </ul>
       <div class="info-box">
         <h4 class="text-black">Заказы</h4>
@@ -22,22 +29,67 @@
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">Наименование</th>
-                <th scope="col">Размер</th>
-                <th scope="col">Цвет</th>
-                <th scope="col">Статус</th>
+                  <th scope="col">Клиент</th>
+                  <th scope="col">Наименование</th>
+                  <th scope="col">Размер</th>
+                  <th scope="col">Цвет</th>
+                  <th scope="col">Статус</th>
+                  <th scope="col">Дата</th>
               </tr>
             </thead>
             <tbody>
-            {%for order in ord%}
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            {%endfor%}
+            <form method="POST">
+            {% csrf_token %}
+                {{ formset.management_form }}
+            {%for form in formset%}
+
+
+            <tr>
+
+                <td>{{form.client}} {{form.id}}
+                    {%for order in orders%}
+                    {%if form.client.value == order.client.id%}
+                    {%if forloop.first%}
+
+                    {{order.client}}
+
+                    {%endif%}
+                    {%endif%}
+                    {%endfor%}
+                </td>
+                <td>{{form.name.value}} {{form.name}}</td>
+                <td>{{form.size.value}} {{form.size}}</td>
+                <td>{{form.color.value}} {{form.color}}</td>
+                <td>{{form.status}}</td>
+                <td>
+                    {%for order in orders%}
+                    {%if form.client.value == order.client.id%}
+                    {%if forloop.first%}
+
+                    {{order.data}}
+{%endif%}
+                    {%endif%}
+{%endfor%}
+
+                    </td>
+
+
+            </tr>
+                {%endfor%}
+                <td><input type="submit" class="btn btn-success" value="Сохранить"></td>
+</form>
+
+<!--            {%for order in orders%}-->
+<!--              <tr>-->
+<!--                <td>{{order.client}}</td>-->
+<!--                <td>{{order.name}}</td>-->
+<!--                <td>{{order.size}}</td>-->
+<!--                <td>{{order.color}}</td>-->
+<!--                <td>{{order.status}}</td>-->
+<!--                  <td>{{order.data}}</td>-->
+
+<!--              </tr>-->
+<!--            {%endfor%}-->
             </tbody>
           </table>
         </div>

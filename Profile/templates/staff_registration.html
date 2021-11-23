@@ -45,7 +45,7 @@
     <div class="text-center m-b-3">
       <img src="{{MEDIA_URL}}/logo/logo_back_free.png" width="160">
     </div>
-    <form method="post" id="RegForm" data-clubs-url="{%url 'ajax_load_clubs'%}" novalidate>
+    <form method="post" id="RegForm">
         {%csrf_token%}
 <!--        {{form.as_p}}-->
       <div class="form-group has-feedback">
@@ -69,25 +69,10 @@
         {{form.club.errors}}
       </div>
       <div class="form-group has-feedback">
-        {{form.sportsman}}
-        {{form.sportsman.errors}}
+        {{form.trainer}}
+        {{form.trainer.errors}}
       </div>
-            <div class="form-group has-feedback">
-        {{form.first_name_m}}
-        {{form.first_name_m.errors}}
-      </div>
-      <div class="form-group has-feedback">
-        {{form.mid_name_m}}
-        {{form.mid_name_m.errors}}
-      </div>
-            <div class="form-group has-feedback">
-        {{form.last_name_m}}
-        {{form.last_name_m.errors}}
-      </div>
-      <div class="form-group has-feedback">
-        {{form.phone}}
-        {{form.phone.errors}}
-      </div>
+
       <div class="form-group has-feedback">
         {{form.password1}}
         {{form.password1.errors}}
@@ -96,6 +81,9 @@
         {{form.password2}}
         {{form.password2.errors}}
       </div>
+      {{form.job}}
+      {{form.first_name}}
+      {{form.last_name}}
       <div>
         <!-- /.col -->
         <div class="col-xs-4 m-t-1">
@@ -114,38 +102,38 @@
 <!-- jQuery 3 -->
 <script src="{%static 'js/jquery.min.js'%}"></script>
 
-<script>
-    $("#id_city").change(function () {
-      var url = $("#RegForm").attr("data-clubs-url");  // get the url of the `load_cities` view
-      var cityId = $(this).val();  // get the selected country ID from the HTML input
+<!--<script>-->
+<!--    $("#id_city").change(function () {-->
+<!--      var url = $("#RegForm").attr("data-clubs-url");  // get the url of the `load_cities` view-->
+<!--      var cityId = $(this).val();  // get the selected country ID from the HTML input-->
 
-      $.ajax({                       // initialize an AJAX request
-        url: url,                    // set the url of the request (= localhost:8000/ajax/load-cities/)
-        data: {
-          'city': cityId       // add the country id to the GET parameters
-        },
-        success: function (data) {   // `data` is the return of the `load_cities` view function
-          $("#id_club").html(data);  // replace the contents of the city input with the data that came from the server
-        }
-      });
+<!--      $.ajax({                       // initialize an AJAX request-->
+<!--        url: url,                    // set the url of the request (= localhost:8000/ajax/load-cities/)-->
+<!--        data: {-->
+<!--          'city': cityId       // add the country id to the GET parameters-->
+<!--        },-->
+<!--        success: function (data) {   // `data` is the return of the `load_cities` view function-->
+<!--          $("#id_club").html(data);  // replace the contents of the city input with the data that came from the server-->
+<!--        }-->
+<!--      });-->
 
-    });
-        $("#id_club").change(function () {
-      var url = $("#RegForm").attr("data-clubs-url");  // get the url of the `load_cities` view
-      var clubId = $(this).val();  // get the selected country ID from the HTML input
+<!--    });-->
+<!--        $("#id_club").change(function () {-->
+<!--      var url = $("#RegForm").attr("data-clubs-url");  // get the url of the `load_cities` view-->
+<!--      var clubId = $(this).val();  // get the selected country ID from the HTML input-->
 
-      $.ajax({                       // initialize an AJAX request
-        url: url,                    // set the url of the request (= localhost:8000/ajax/load-cities/)
-        data: {
-          'club': clubId       // add the country id to the GET parameters
-        },
-        success: function (data) {   // `data` is the return of the `load_cities` view function
-          $("#id_sportsman").html(data);  // replace the contents of the city input with the data that came from the server
-        }
-      });
+<!--      $.ajax({                       // initialize an AJAX request-->
+<!--        url: url,                    // set the url of the request (= localhost:8000/ajax/load-cities/)-->
+<!--        data: {-->
+<!--          'club': clubId       // add the country id to the GET parameters-->
+<!--        },-->
+<!--        success: function (data) {   // `data` is the return of the `load_cities` view function-->
+<!--          $("#id_sportsman").html(data);  // replace the contents of the city input with the data that came from the server-->
+<!--        }-->
+<!--      });-->
 
-    });
-  </script>
+<!--    });-->
+<!--  </script>-->
 
 
 

@@ -1,53 +1,53 @@
 {%extends 'base.html'%}
 {%block title%}
-Список спортсменов
+Заказы
 {%endblock%}
 {%block content%}
 <div class="content-wrapper">
-            <div class="content-header sty-one">
-        <div class="row">
-            <div class="col-6">
-            <h1 class="text-black">Спортсмены</h1>
-        </div>
-            {%if request.user.job != 'Спортсмен' and request.user.job != 'Ассистент'%}
-            <div class="col-3 offset-md-3">
-                <a href="{%url 'create_sportsman'%}" class="btn btn-rounded btn-warning">Добавить спортсмена</a>
-            </div>
-            {%endif%}
-        </div>
+    <div class="content-header sty-one">
+      <h1 class="text-black">Заказы</h1>
     </div>
 <div class="content">
    <ul class="nav nav-tabs customtab2" role="tablist">
-     <li class="nav-item">
-        <a class="nav-link "  role="tab" href="{%url 'sportsmen'%}">Все спортсмены</a>
-      </li>
-      {%for group in groups%}
-      <li class="nav-item">
-        <a class="nav-link"  role="tab" href="{%url 'sportsmen_group' group.pk%}">{{group}}</a>
-      </li>
-      {%endfor%}
+       <li class="nav-item ">
+            <a class="nav-link"  role="tab" href="{%url 'orders_admin'%}">Все заказы</a>
+       </li>
+       <li class="nav-item ">
+            <a class="nav-link"  role="tab" href="{%url 'orders_pay'%}">Ожидает оплаты</a>
+       </li>
+       <li class="nav-item ">
+            <a class="nav-link"  role="tab" href="{%url 'orders_admin_way'%}">В пути</a>
+       </li>
+       <li class="nav-item ">
+            <a class="nav-link"  role="tab" href="{%url 'orders_admin_del'%}">Доставлено</a>
+       </li>
     </ul>
       <div class="info-box">
-        <h4 class="text-black">Спортсмены</h4>
+        <h4 class="text-black">Заказы</h4>
         <div class="table-responsive">
 
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">ФИО</th>
-                <th scope="col">Филиал</th>
-                <th scope="col">Группа</th>
+                  <th scope="col">Клиент</th>
+                  <th scope="col">Наименование</th>
+                  <th scope="col">Размер</th>
+                  <th scope="col">Цвет</th>
+                  <th scope="col">Статус</th>
+                  <th scope="col">Дата</th>
               </tr>
             </thead>
             <tbody>
-            {%for sportsmen in sportsmen%}
-              <tr>
-                <td>{{sportsmen.last_name}} {{sportsmen.first_name}} {{sportsmen.mid_name}}</td>
-                <td>{{sportsmen.filial}}</td>
-                <td>{{sportsmen.group}}</td>
 
-                <td><a href="{%url 'sportsmen_update' pk=sportsmen.id%}"> Изменить</a></td>
-                  <td>
+            {%for order in orders%}
+              <tr>
+                <td>{{order.client}}</td>
+                <td>{{order.name}}</td>
+                <td>{{order.size}}</td>
+                <td>{{order.color}}</td>
+                <td>{{order.status}}</td>
+                  <td>{{order.data}}</td>
+                <td>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                     Удалить
                 </button>
@@ -60,11 +60,11 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              Удалить спортсмена "{{sportsmen.last_name}} {{sportsmen.first_name}} {{sportsmen.mid_name}}"? Это действие нельзя отменить.
+              Удалить заказ "{{order.name}}"? Это действие нельзя отменить.
             </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-          <form action="{%url 'delete_sportsman' pk=sportsmen.pk%}" method="POST">
+          <form action="{%url 'delete_order' pk=order.pk%}" method="POST">
             {% csrf_token %}
             <button class="btn btn-primary">Удалить</button>
             </form>

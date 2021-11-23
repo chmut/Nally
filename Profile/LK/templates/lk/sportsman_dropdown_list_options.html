@@ -1,0 +1,5 @@
+<option value="">Выберите группу</option>
+{% for group in groups %}
+
+<option value="{{ group.pk }}">{{ group.name }}</option>
+{% endfor %}

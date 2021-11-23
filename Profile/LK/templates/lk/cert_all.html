@@ -1,0 +1,61 @@
+{%extends 'base.html'%}
+{%block title%}
+Сертификаты
+{%endblock%}
+{%block content%}
+<div class="content-wrapper">
+        <div class="content-header sty-one">
+        <div class="row">
+            <div class="col-6">
+            <h1 class="text-black">Сертификаты</h1>
+        </div>
+            {%if request.user.job != 'Спортсмен' and request.user.job != 'Ассистент'%}
+            <div class="col-3 offset-md-3">
+                <a href="{%url 'cert_create'%}" class="btn btn-rounded btn-warning">Добавить сертификат</a>
+            </div>
+            {%endif%}
+        </div>
+    </div>
+<div class="content">
+   <ul class="nav nav-tabs customtab2" role="tablist">
+     <li class="nav-item">
+        <a class="nav-link"  role="tab" href="{%url 'cert_active'%}">Активные сертификаты</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active"  role="tab" href="{%url 'cert_all'%}">Все сертификаты</a>
+      </li>
+    </ul>
+      <div class="info-box">
+        <h4 class="text-black">Сертификаты</h4>
+        <div class="table-responsive">
+
+          <table class="table">
+            <thead>
+              <tr>
+                  <th scope="col">Спортсмен</th>
+                  <th scope="col">Номер сертификата</th>
+                  <th scope="col">Пояс</th>
+                  <th scope="col">Дата выдачи</th>
+                  <th scope="col">Статус</th>
+              </tr>
+            </thead>
+            <tbody>
+            {%for cert in cert%}
+              <tr>
+                  <td>{{cert.person.last_name}} {{cert.person.first_name}} {{cert.person.mid_name}}</td>
+                  <td>{{cert.cert_numb}}</td>
+                  <td>{{cert.belt}}</td>
+                  <td>{{cert.data}}</td>
+                  <td>{{cert.status}}</td>
+
+                <td><a href="{%url 'cert_update' pk=cert.id%}"> Изменить</a></td>
+              </tr>
+            {%endfor%}
+            </tbody>
+          </table>
+        </div>
+      </div>
+</div>
+</div>
+
+    {%endblock%}

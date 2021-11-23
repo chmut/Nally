@@ -1,0 +1,137 @@
+{%extends 'base.html'%}
+{%block title%}
+Список спортсменов
+{%endblock%}
+{%block content%}
+<div class="content-wrapper">
+        <div class="content-header sty-one">
+        <div class="row">
+            <div class="col-6">
+            <h1 class="text-black">Добавление спортсмена</h1>
+        </div>
+        </div>
+    </div>
+<div class="content">
+                    <form method="post" id="SportForm" data-groups-url="{%url 'ajax_load_groups'%}" enctype="multipart/form-data">
+                        {%csrf_token%}
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                {{form.last_name.label}}
+                                {{form.last_name}}
+                                {{form.last_name.errors}}
+                            </div>
+                            <div class="form-group col-md-3">
+                                {{form.first_name.label}}
+                                {{form.first_name}}
+                                {{form.first_name.errors}}
+                            </div>
+                            <div class="form-group col-md-3">
+                                {{form.mid_name.label}}
+                                {{form.mid_name}}
+                                {{form.mid_name.errors}}
+                            </div>
+                            <div class="form-group col-md-2">
+                                {{form.sex.label}}
+                                {{form.sex}}
+                                {{form.sex.errors}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                {{form.last_name_m.label}}
+                                {{form.last_name_m}}
+                                {{form.last_name_m.errors}}
+                            </div>
+                            <div class="form-group col-md-4">
+                                {{form.first_name_m.label}}
+                                {{form.first_name_m}}
+                                {{form.first_name_m.errors}}
+                            </div>
+                            <div class="form-group col-md-4">
+                                {{form.mid_name_m.label}}
+                                {{form.mid_name_m}}
+                                {{form.mid_name_m.errors}}
+                            </div>
+                        </div>
+
+                            <div class="form-group">
+                                {{form.phone.label}}
+                                {{form.phone}}
+                                {{form.phone.errors}}
+                            </div>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                {{form.last_name_f.label}}
+                                {{form.last_name_f}}
+                                {{form.last_name_f.errors}}
+                            </div>
+                            <div class="form-group col-md-4">
+                                {{form.first_name_f.label}}
+                                {{form.first_name_f}}
+                                {{form.first_name_f.errors}}
+                            </div>
+                            <div class="form-group col-md-4">
+                                {{form.mid_name_f.label}}
+                                {{form.mid_name_f}}
+                                {{form.mid_name_f.errors}}
+                            </div>
+                        </div>
+                            <div class="form-group">
+                                {{form.phone_dop.label}}
+                                {{form.phone_dop}}
+                                {{form.phone_dop.errors}}
+                            </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                {{form.filial.label}}
+                                {{form.filial}}
+                                {{form.filial.errors}}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{form.group.label}}
+                                {{form.group}}
+                                {{form.group.errors}}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                {{form.weight.label}}
+                                {{form.weight}}
+                                {{form.weight.errors}}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{form.passport.label}}
+                                {{form.passport}}
+                                {{form.passport.errors}}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{form.bio.label}}
+                            {{form.bio}}
+                            {{form.bio.errors}}
+                        </div>
+<!--                        {{form.as_p}}-->
+                        <input type="submit" class="btn btn-success" value="Опубликовать">
+                    </form>
+</div>
+</div>
+<script>
+    $("#id_filial").change(function () {
+      var url = $("#SportForm").attr("data-groups-url");  // get the url of the `load_cities` view
+      var filialId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request (= localhost:8000/ajax/load-cities/)
+        data: {
+          'filial': filialId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_group").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+  </script>
+    {%endblock%}

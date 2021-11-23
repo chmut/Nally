@@ -1,0 +1,74 @@
+{%extends 'base.html'%}
+
+{%block title%}
+
+Клуб
+
+{%endblock%}
+
+{%block content%}
+<div class="content-wrapper">
+    <div class="content-header sty-one">
+        <div class="row">
+            <div class="col-6">
+            <h1 class="text-black">Клуб</h1>
+        </div>
+
+
+            <div class="col-6">
+                <a href="{%url 'groups'%}" class="btn btn-rounded btn-warning">Филиалы</a>
+            </div>
+
+        </div>
+    </div>
+<div class="content">
+    <ul class="nav nav-tabs customtab2" role="tablist">
+        <li class="nav-item">
+        <a class="nav-link"  role="tab" href="{%url 'personal'%}">Персонал</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link"  role="tab" href="{%url 'personal_trainers'%}">Инструкторы</a>
+      </li>
+        <li class="nav-item">
+        <a class="nav-link"  role="tab" href="{%url 'personal_admins'%}">Администраторы</a>
+      </li>
+    </ul>
+
+      <div class="info-box">
+        <h4 class="text-black">Персонал</h4>
+        <div class="table-responsive">
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">ФИО</th>
+                <th scope="col">Зарплата</th>
+                <th scope="col">Должность</th>
+              </tr>
+            </thead>
+            <tbody>
+            {%for pers in trainers%}
+              <tr>
+                <td>{{pers.last_name}} {{pers.first_name}} {{pers.mid_name}}</td>
+                <td>{{pers.salary}}</td>
+                <td>{{pers.job}}</td>
+
+                  <td><a href=""> Изменить</a></td>
+              </tr>
+            {%endfor%}
+            <tr>
+                <td><a href="" class="btn btn-rounded btn-warning">Добавить работника</a></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+</div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    var link = window.location.pathname;
+    $('.customtab2 li a[href="'+link+'"]').addClass('active');
+  });
+</script>
+    {%endblock%}

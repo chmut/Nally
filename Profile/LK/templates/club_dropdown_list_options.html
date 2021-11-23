@@ -1,0 +1,16 @@
+
+
+{% for club in clubs %}
+{% if forloop.first %}
+ <option value="">Выберите клуб</option>
+{%endif%}
+<option value="{{ club.pk }}">{{ club.name }}</option>
+{% endfor %}
+
+
+{% for sportsman in sportsmen %}
+{% if forloop.first %}
+ <option value="">Выберите спортсмена</option>
+{%endif%}
+<option value="{{ sportsman.pk }}">{{ sportsman.last_name }} {{ sportsman.first_name }} {{ sportsman.mid_name }}</option>
+{% endfor %}

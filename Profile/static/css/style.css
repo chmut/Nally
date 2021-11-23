@@ -2988,7 +2988,12 @@ small.text-muted {
 	color:#151515
 }
 
-
+.btn-primary.disabled, .btn-primary:disabled{
+	background-color: #ff9a00;
+	border-color: #ff9a00;
+	color:#151515;
+	opacity: .65;
+}
 
 caption button.btn-default{
 	background-color: #5867dd;

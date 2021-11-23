@@ -1,11 +1,11 @@
 {%extends 'base.html'%}
 {%block title%}
-Список спортсменов
+Сертификаты
 {%endblock%}
 {%block content%}
 <div class="content-wrapper">
     <div class="content-header sty-one">
-      <h1 class="text-black">{{sportsman.first_name}} {{sportsman.last_name}}</h1>
+      <h1 class="text-black">{{cert.person.last_name}} {{cert.person.first_name}} {{cert.person.mid_name}}</h1>
     </div>
 <div class="content">
     <form method="post">

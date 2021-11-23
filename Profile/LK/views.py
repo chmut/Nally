@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required
-from django.views.generic import UpdateView, ListView, CreateView
+from django.views.generic import UpdateView, ListView, CreateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import *
 from .models import *
@@ -24,7 +24,15 @@ class LoginUser(LoginView):
 # class SignUpDop(CreateView):
 #     form_class = SportRegForm
 #     success_url = reverse_lazy('login')
-#     template_name = 'dop_registration.html'
+#     template_name = 'staff_registration.html'
+
+
+def load_clubs(request):
+    city_id = request.GET.get('city')
+    clubs = Club.objects.filter(city_id=city_id)
+    club_id = request.GET.get('club')
+    sportsmen = Sportsman.objects.filter(club_id=club_id)
+    return render(request, 'club_dropdown_list_options.html', {'clubs': clubs, 'sportsmen':sportsmen})
 
 
 class SignUpView(CreateView):
@@ -32,12 +40,28 @@ class SignUpView(CreateView):
     success_url = reverse_lazy('login')
     template_name = 'registration.html'
 
+    def form_valid(self, form):
+        self.form = form.save(commit=False)
+        self.form.first_name = self.form.sportsman.first_name
+        self.form.mid_name = self.form.sportsman.mid_name
+        self.form.last_name = self.form.sportsman.last_name
+        self.form.save()
+        return super().form_valid(form)
 
-class Profile(UpdateView):
-    model = User
-    form_class = UpdateForm
-    success_url = reverse_lazy('settings')
-    template_name = 'lk/settings.html'
+
+class SignUpStaff(CreateView):
+    form_class = TrainerRegForm
+    success_url = reverse_lazy('login')
+    template_name = 'staff_registration.html'
+
+    def form_valid(self, form):
+        self.form = form.save(commit=False)
+        self.form.first_name = self.form.trainer.first_name
+        self.form.mid_name = self.form.trainer.mid_name
+        self.form.last_name = self.form.trainer.last_name
+        self.form.job = 'Персонал'
+        self.form.save()
+        return super().form_valid(form)
 
 
 @login_required
@@ -45,7 +69,7 @@ def profile(request):
     form = UpdateForm(request.POST, request.FILES, instance=request.user)
     password_form = ChangePassword(request.user, request.POST)
     try:
-        cert = Certificates.objects.get(person=request.user, status=True)
+        cert = Certificates.objects.get(person=request.user.sportsman, status=True)
     except Certificates.DoesNotExist:
         cert = 0
     if request.method == 'POST':
@@ -190,9 +214,15 @@ def create_order(request):
     return render(request, 'lk/create_order.html', data)
 
 
+class DeleteOrder(DeleteView):
+    model = Orders
+    template_name = 'lk/orders.html'
+    success_url = reverse_lazy('orders')
+
+
 @login_required
 def stat(request):
-    stat = Statistic.objects.filter(user_id=request.user)
+    stat = Statistic.objects.filter(user=request.user.sportsman)
     context = {
         'stat': stat,
         'title': 'Посещаемость',
@@ -202,7 +232,7 @@ def stat(request):
 
 @login_required
 def create_news(request):
-    if request.user.job == 'Тренер':
+    if request.user.trainer.job == 'Тренер':
         # filial = Filial.objects.filter(title=request.user.filial)
         # club = Club.objects.filter(name=filial[0].club)
         club = Club.objects.get(name=request.user.club)
@@ -219,7 +249,7 @@ def create_news(request):
         else:
             form = CreateNews()
         return render(request, 'lk/create_news.html', {"form": form})
-    elif request.user.job == 'Руководитель клуба':
+    elif request.user.trainer.job == 'Руководитель клуба':
         club = Club.objects.get(name=request.user.club)
         if request.method == 'POST':
             data = request.POST.copy()
@@ -239,26 +269,59 @@ def create_news(request):
         return redirect('/news/')
 
 
+
 @login_required
 def sportsmen(request):
-    if request.user.job == 'Тренер':
-        groups = Group.objects.filter(filial=request.user.filial)
-        sportsmen = User.objects.filter(city=request.user.city, club=None, job='Спортсмен')
+    if request.user.trainer.job == 'Тренер':
+        groups = Group.objects.filter(trainer=request.user.trainer)
+        sportsmen = Sportsman.objects.filter(group__trainer__exact=request.user.trainer)
         return render(request, 'lk/sportsmen.html', {"sportsmen": sportsmen, "groups": groups})
-    if request.user.job == 'Руководитель клуба':
-        filials =Filial.objects.filter(club=request.user.club)
-        sportsmen = User.objects.filter(city=request.user.city, club=None, job='Спортсмен')
+    if request.user.trainer.job == 'Руководитель клуба':
+        filials = Filial.objects.filter(club=request.user.club)
+        sportsmen = Sportsman.objects.filter(club=request.user.club)
         return render(request, 'lk/sportsmen.html', {"sportsmen": sportsmen, "filials": filials})
     else:
         return redirect('/')
 
 
 @login_required
+def create_sportsman(request):
+    if request.user.trainer.job != 'Ассистент':
+        if request.method == 'POST':
+            data = request.POST.copy()
+            data['club'] = Club.objects.get(name=request.user.trainer.club)
+            form = CreateSportsman(data, request.FILES)
+            if form.is_valid():
+                sportsman = Sportsman.objects.create(**form.cleaned_data)
+            else:
+                print(form.errors)
+        else:
+            form = CreateSportsman(initial={'club': request.user.trainer.club})
+            if form.is_valid():
+                sportsman = Sportsman.objects.create(**form.cleaned_data)
+        return render(request, 'lk/create_sportsman.html', {"form": form})
+    else:
+        return redirect('/')
+
+
+def load_groups(request):
+    filial_id = request.GET.get('filial')
+    groups = Group.objects.filter(filial_id=filial_id)
+    return render(request, 'lk/sportsman_dropdown_list_options.html', {'groups': groups})
+
+
+class DeleteSportsman(DeleteView):
+    model = Sportsman
+    template_name = 'lk/sportsmen.html'
+    success_url = reverse_lazy('sportsmen')
+
+
+@login_required
 def sportsmen_group(request, group_id):
-    if request.user.job != 'Спортсмен' or request.user.job != 'Ассистент':
-        groups = Group.objects.filter(filial=request.user.filial)
+    if request.user.trainer.job != 'Ассистент':
+        groups = Group.objects.filter(trainer=request.user.trainer)
         group = Group.objects.get(pk=group_id)
-        sportsmen = User.objects.filter(group_id=group_id, job='Спортсмен')
+        sportsmen = Sportsman.objects.filter(group_id=group_id)
         return render(request, 'lk/sportsmen_group.html', {"sportsmen": sportsmen, "groups": groups, "group":group})
     else:
         return redirect('/')
@@ -266,17 +329,17 @@ def sportsmen_group(request, group_id):
 
 @login_required
 def sportsmen_filial(request, filial_id):
-    if request.user.job == 'Руководитель клуба':
-        filials = Filial.objects.filter(club=request.user.club)
+    if request.user.trainer.job == 'Руководитель клуба':
+        filials = Filial.objects.filter(club=request.user.trainer.club)
         filial = Filial.objects.get(pk=filial_id)
-        sportsmen = User.objects.filter(filial_id=filial_id, job='Спортсмен')
+        sportsmen = Sportsman.objects.filter(filial_id=filial_id)
         return render(request, 'lk/sportsmen_filial.html', {"sportsmen": sportsmen, "filials": filials, "filial":filial})
     else:
         return redirect('/')
 
 
 class SportsmenUpdate(LoginRequiredMixin, UpdateView):
-    model = User
+    model = Sportsman
     form_class = UpdateSportsmen
     template_name = 'lk/sportsmen_update.html'
     success_url = reverse_lazy('sportsmen')
@@ -284,20 +347,23 @@ class SportsmenUpdate(LoginRequiredMixin, UpdateView):
 
 @login_required
 def groups(request):
-    if request.user.job == 'Тренер':
-        groups = Group.objects.filter(filial=request.user.filial)
-        return render(request, 'lk/groups.html', {"groups": groups})
-    elif request.user.job == 'Руководитель клуба':
-        groups = Group.objects.filter(filial__club__exact=request.user.club)
-        filials = Filial.objects.filter(club=request.user.club)
+    if request.user.trainer.job == 'Тренер':
+
+        groups = Group.objects.filter(trainer=request.user.trainer)
+        filials = Filial.objects.filter(group__trainer=request.user.trainer)
+
+        return render(request, 'lk/groups.html', {"groups": groups, "filials":filials})
+    elif request.user.trainer.job == 'Руководитель клуба':
+        groups = Group.objects.filter(filial__club__exact=request.user.trainer.club)
+        filials = Filial.objects.filter(club=request.user.trainer.club)
         return render(request, 'lk/groups.html', {"groups": groups, "filials":filials})
     else:
-        return redirect('/')
+        return redirect('profile')
 
 
 @login_required
 def filials(request, filial_id):
-    if request.user.job == 'Руководитель клуба':
+    if request.user.trainer.job == 'Руководитель клуба':
         filial = Filial.objects.get(pk=filial_id)
         groups = Group.objects.filter(filial=filial)
         filials = Filial.objects.filter(club=request.user.club)
@@ -306,17 +372,48 @@ def filials(request, filial_id):
         return redirect('/')
 
 
-class CreateGroup(LoginRequiredMixin, CreateView):
-    form_class = GroupForm
-    template_name = 'lk/create_group.html'
-    success_url = reverse_lazy('groups')
+# class CreateGroup(LoginRequiredMixin, CreateView):
+#     form_class = GroupForm
+#     template_name = 'lk/create_group.html'
+#     success_url = reverse_lazy('groups')
+#
+#     def form_valid(self, form):
+#         fields = form.save(commit=False)
+#         fields.trainer = Trainers.objects.get(name=self.request.user)
+#         # if self.request.user.job == 'Руководитель клуба':
+#         #     fields.filial.id = filial_id
+#         # else:
+#         #     fields.filial = self.request.user.filial
+#         fields.filial = self.request.user.filial
+#         fields.save()
+#         return super().form_valid(form)
 
-    def form_valid(self, form):
-        fields = form.save(commit=False)
-        fields.trainer = Trainers.objects.get(name=self.request.user)
-        fields.filial = self.request.user.filial
-        fields.save()
-        return super().form_valid(form)
+
+def create_group(request, filial_id):
+    trainer = Trainers.objects.filter(club=request.user.trainer.club)
+    if request.method == 'POST':
+        if request.user.trainer.job == 'Руководитель клуба':
+            data = request.POST.copy()
+            data['filial'] = Filial.objects.get(id=filial_id)
+            form = GroupFormPro(data, request.FILES)
+            if form.is_valid():
+                group = Group.objects.create(**form.cleaned_data)
+                return redirect('groups')
+            else:
+                print(form.errors)
+        else:
+            data = request.POST.copy()
+            data['filial'] = Filial.objects.get(name=request.user.trainer.filial)
+            data['trainer'] = request.user.trainer
+            form = GroupForm(data, request.FILES)
+            if form.is_valid():
+                group = Group.objects.create(**form.cleaned_data)
+                return redirect('groups')
+    if request.user.trainer.job == 'Руководитель клуба':
+        form = GroupFormPro()
+    else:
+        form = GroupForm()
+    return render(request, 'lk/create_group.html', {"form":form})
 
 
 class GroupUpdate(LoginRequiredMixin, UpdateView):
@@ -328,12 +425,12 @@ class GroupUpdate(LoginRequiredMixin, UpdateView):
 
 @login_required
 def create_statistic(request):
-    if request.user.job != 'Спортсмен' or request.user.job != 'Ассистент':
-        user = User.objects.filter(filial=request.user.filial, job='Спортсмен')
-        groups = Group.objects.filter(filial=request.user.filial)
+    if request.user.trainer.job != 'Ассистент':
+        user = Sportsman.objects.filter(group__trainer__exact=request.user.trainer)
+        groups = Group.objects.filter(trainer=request.user.trainer)
         enddate = datetime.today()
         startdate = enddate - timedelta(days=7)
-        stat = Statistic.objects.filter(user__filial__exact=request.user.filial, user__job__exact='Спортсмен', day__range=[startdate, enddate]).order_by("day")
+        stat = Statistic.objects.filter(user__group__trainer__exact=request.user.trainer, day__range=[startdate, enddate]).order_by("day")
         formset = modelformset_factory(Statistic, form=CreateStat, extra=0)
 
 
@@ -353,7 +450,8 @@ def create_statistic(request):
                         print(form_date.errors)
             elif request.POST.get("form_type") == 'create':
 
-                formset = formset(request.POST, request.FILES, queryset=Statistic.objects.filter(user__filial__exact=request.user.filial, user__job__exact='Спортсмен', day__range=[startdate,enddate]).order_by("day"))
+                formset = formset(request.POST, request.FILES, queryset=Statistic.objects.filter(
+                    user__group__trainer__exact=request.user.trainer, day__range=[startdate,enddate]).order_by("day"))
                 if formset.is_valid():
                     formset.save()
                 else:
@@ -361,7 +459,7 @@ def create_statistic(request):
 
         form_date = CreateDate()
         formset = modelformset_factory(Statistic, form=CreateStat, extra=0)
-        formset = formset(queryset=Statistic.objects.filter(user__filial__exact=request.user.filial, user__job__exact='Спортсмен', day__range=[startdate,enddate]).order_by("day"))
+        formset = formset(queryset=Statistic.objects.filter(user__group__trainer__exact=request.user.trainer, day__range=[startdate,enddate]).order_by("day"))
         context = {
             "stat": stat,
             "pers": user,
@@ -372,16 +470,16 @@ def create_statistic(request):
 
         return render(request, 'lk/statistic_admin.html', context)
     else:
-        return redirect('/')
+        return redirect('profile')
 
 
 def get_group_stat(request, group_id):
-    if request.user.job != 'Спортсмен' or request.user.job != 'Ассистент':
-        user = User.objects.filter(group_id=group_id, job='Спортсмен')
-        groups = Group.objects.filter(filial=request.user.filial)
+    if request.user.trainer.job != 'Ассистент':
+        user = Sportsman.objects.filter(group_id=group_id)
+        groups = Group.objects.filter(trainer=request.user.trainer)
         enddate = datetime.today()
         startdate = enddate - timedelta(days=7)
-        stat = Statistic.objects.filter(user__group__exact=group_id, user__job__exact='Спортсмен',
+        stat = Statistic.objects.filter(user__group__exact=group_id,
                                         day__range=[startdate, enddate]).order_by("day")
         group = Group.objects.get(pk=group_id)
         formset = modelformset_factory(Statistic, form=CreateStat, extra=0)
@@ -404,7 +502,6 @@ def get_group_stat(request, group_id):
 
                 formset = formset(request.POST, request.FILES,
                                   queryset=Statistic.objects.filter(user__group__exact=group_id,
-                                                                    user__job__exact='Спортсмен',
                                                                     day__range=[startdate, enddate]).order_by("day"))
                 if formset.is_valid():
                     formset.save()
@@ -414,7 +511,7 @@ def get_group_stat(request, group_id):
         form_date = CreateDate()
         formset = modelformset_factory(Statistic, form=CreateStat, extra=0)
         formset = formset(
-            queryset=Statistic.objects.filter(user__group__exact=group_id, user__job__exact='Спортсмен',
+            queryset=Statistic.objects.filter(user__group__exact=group_id,
                                               day__range=[startdate, enddate]).order_by("day"))
         context = {
             "stat": stat,
@@ -426,5 +523,241 @@ def get_group_stat(request, group_id):
         }
 
         return render(request, 'lk/statistic_group.html', context)
+    else:
+        return redirect('profile')
+
+
+@login_required
+def cert_active(request):
+    if request.user.trainer.job == 'Тренер':
+        cert = Certificates.objects.filter(person__group__trainer__exact=request.user.trainer, status=1)
+        return render(request, 'lk/cert_active.html', {"cert": cert,})
+    if request.user.trainer.job == 'Руководитель клуба':
+        cert = Certificates.objects.filter(person__club__exact=request.user.club, status=1)
+        return render(request, 'lk/cert_active.html', {"cert": cert,})
+    else:
+        return redirect('profile')
+
+
+@login_required
+def cert_all(request):
+    if request.user.trainer.job == 'Тренер':
+        cert = Certificates.objects.filter(person__group__trainer__exact=request.user.trainer)
+        return render(request, 'lk/cert_all.html', {"cert": cert,})
+    if request.user.trainer.job == 'Руководитель клуба':
+        cert = Certificates.objects.filter(person__club__exact=request.user.club)
+        return render(request, 'lk/cert_all.html', {"cert": cert,})
+    else:
+        return redirect('profile')
+
+
+class CertUpdate(LoginRequiredMixin, UpdateView):
+    model = Certificates
+    form_class = UpdateCert
+    template_name = 'lk/cert_update.html'
+    success_url = reverse_lazy('cert_active')
+
+
+class CertCreate(LoginRequiredMixin, CreateView):
+    model = Certificates
+    form_class = CreateCert
+    template_name = 'lk/cert_create.html'
+    success_url = reverse_lazy('cert_active')
+
+
+class FilialCreate(LoginRequiredMixin, CreateView):
+    form_class = FilialForm
+    template_name = 'lk/create_group.html'
+    success_url = reverse_lazy('groups')
+
+    def form_valid(self, form):
+        fields = form.save(commit=False)
+        fields.club = Club.objects.get(name=self.request.user.trainer.club)
+        fields.save()
+        return super().form_valid(form)
+
+
+class FilialUpdate(LoginRequiredMixin, UpdateView):
+    model = Filial
+    form_class = FilialForm
+    template_name = 'lk/create_group.html'
+    success_url = reverse_lazy('groups')
+
+
+class FilialDelete(LoginRequiredMixin, DeleteView):
+    model = Filial
+    template_name = 'lk/groups.html'
+    success_url = reverse_lazy('sportsmen')
+
+
+@login_required
+def personal(request):
+    if request.user.trainer.job == 'Руководитель клуба':
+        trainers = Trainers.objects.filter(club=request.user.trainer.club)
+        return render(request, 'lk/personal.html', {"trainers": trainers,})
+    else:
+        redirect('profile')
+
+
+def personal_trainers(request):
+    if request.user.trainer.job == 'Руководитель клуба':
+        trainers = Trainers.objects.filter(club=request.user.trainer.club, job='Тренер')
+        return render(request, 'lk/personal.html', {"trainers": trainers,})
+    else:
+        redirect('profile')
+
+
+def personal_admins(request):
+    if request.user.trainer.job == 'Руководитель клуба':
+        trainers = Trainers.objects.filter(club=request.user.trainer.club, job='Администратор филиала')
+        return render(request, 'lk/personal.html', {"trainers": trainers,})
+    else:
+        redirect('profile')
+
+
+def create_personal(request):
+    pass
+
+
+class PersonalUpdate(LoginRequiredMixin, UpdateView):
+    model = Trainers
+    form_class = FilialForm
+    template_name = 'lk/create_group.html'
+    success_url = reverse_lazy('groups')
+
+
+@login_required
+def orders_admin(request):
+    if request.user.trainer.job == 'Тренер':
+        orders = Orders.objects.filter(client__sportsman__group__trainer__exact=request.user.trainer)
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        if request.method == 'POST':
+            formset = formset(request.POST, request.FILES,
+                              queryset=Orders.objects.filter(client__sportsman__group__trainer__exact=request.user.trainer))
+
+            if formset.is_valid():
+                formset.save()
+            else:
+                print(formset.errors)
+
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        formset = formset(
+            queryset=Orders.objects.filter(client__sportsman__group__trainer__exact=request.user.trainer))
+        return render(request, 'lk/orders_admin.html', {"orders": orders, "formset": formset,})
+    if request.user.trainer.job == 'Руководитель клуба':
+        orders = Orders.objects.filter(client__club__exact=request.user.club)
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        if request.method == 'POST':
+            formset = formset(request.POST, request.FILES,
+                              queryset=Orders.objects.filter(
+                                  client__club__exact=request.user.club))
+
+            if formset.is_valid():
+                formset.save()
+            else:
+                print(formset.errors)
+
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        formset = formset(
+            queryset=Orders.objects.filter(client__club__exact=request.user.club))
+        return render(request, 'lk/orders_admin.html', {"orders": orders, "formset": formset})
+    else:
+        return redirect('/')
+
+
+@login_required
+def orders_admin_pay(request):
+    if request.user.trainer.job == 'Тренер':
+        orders = Orders.objects.filter(client__sportsman__group__trainer__exact=request.user.trainer, status='Ожидает оплаты')
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        if request.method == 'POST':
+            formset = formset(request.POST, request.FILES,
+                              queryset=Orders.objects.filter(
+                                  client__sportsman__group__trainer__exact=request.user.trainer, status='Ожидает оплаты'))
+
+            if formset.is_valid():
+                formset.save()
+            else:
+                print(formset.errors)
+
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        formset = formset(
+            queryset=Orders.objects.filter(client__sportsman__group__trainer__exact=request.user.trainer, status='Ожидает оплаты'))
+        return render(request, 'lk/orders_admin.html', {"orders": orders, "formset": formset, })
+    elif request.user.trainer.job == 'Руководитель клуба':
+        orders = Orders.objects.filter(client__club__exact=request.user.club, status='Ожидает оплаты')
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        if request.method == 'POST':
+            formset = formset(request.POST, request.FILES,
+                              queryset=Orders.objects.filter(
+                                  client__club__exact=request.user.club, status='Ожидает оплаты'))
+
+            if formset.is_valid():
+                formset.save()
+            else:
+                print(formset.errors)
+
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        formset = formset(
+            queryset=Orders.objects.filter(client__club__exact=request.user.club, status='Ожидает оплаты'))
+        return render(request, 'lk/orders_admin.html', {"orders": orders, "formset": formset})
+    else:
+        return redirect('/')
+
+
+@login_required
+def orders_admin_way(request):
+    if request.user.trainer.job == 'Тренер':
+        orders = Orders.objects.filter(client__sportsman__group__trainer__exact=request.user.trainer,
+                                       status='В пути')
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        if request.method == 'POST':
+            formset = formset(request.POST, request.FILES,
+                              queryset=Orders.objects.filter(
+                                  client__sportsman__group__trainer__exact=request.user.trainer,
+                                  status='В пути'))
+
+            if formset.is_valid():
+                formset.save()
+            else:
+                print(formset.errors)
+
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        formset = formset(
+            queryset=Orders.objects.filter(client__sportsman__group__trainer__exact=request.user.trainer,
+                                           status='В пути'))
+        return render(request, 'lk/orders_admin.html', {"orders": orders, "formset": formset, })
+    elif request.user.trainer.job == 'Руководитель клуба':
+        orders = Orders.objects.filter(client__club__exact=request.user.club, status='В пути')
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        if request.method == 'POST':
+            formset = formset(request.POST, request.FILES,
+                              queryset=Orders.objects.filter(
+                                  client__club__exact=request.user.club, status='В пути'))
+
+            if formset.is_valid():
+                formset.save()
+            else:
+                print(formset.errors)
+
+        formset = modelformset_factory(Orders, form=OrderAdmin, extra=0)
+        formset = formset(
+            queryset=Orders.objects.filter(client__club__exact=request.user.club, status='В пути'))
+        return render(request, 'lk/orders_admin.html', {"orders": orders, "formset": formset})
+    else:
+        return redirect('/')
+
+
+@login_required
+def orders_admin_del(request):
+    if request.user.trainer.job == 'Тренер':
+        orders = Orders.objects.filter(client__sportsman__group__trainer__exact=request.user.trainer,
+                                       status='Доставлено')
+
+        return render(request, 'lk/orders_admin_del.html', {"orders": orders})
+    if request.user.trainer.job == 'Руководитель клуба':
+        orders = Orders.objects.filter(client__club__exact=request.user.club, status='Доставлено')
+
+        return render(request, 'lk/orders_admin_del.html', {"orders": orders, })
     else:
         return redirect('/')
