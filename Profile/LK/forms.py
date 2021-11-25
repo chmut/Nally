@@ -156,7 +156,7 @@ class UserOrders(forms.ModelForm):
 class CreateNews(forms.ModelForm):
     class Meta:
         model = News
-        fields = ['title', 'content', 'club', 'city', 'photo', 'for_all']
+        fields = ['title', 'content', 'club', 'city', 'photo', 'for_all', 'filial', 'author']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control'}),
@@ -164,6 +164,8 @@ class CreateNews(forms.ModelForm):
             'city': forms.HiddenInput(),
             'photo': forms.FileInput(),
             'for_all': forms.HiddenInput(),
+            'filial': forms.Select(attrs={'class': 'form-control'}),
+            'author': forms.HiddenInput()
         }
 
 
@@ -228,12 +230,12 @@ class UpdateSportsmen(forms.ModelForm):
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ['name', 'cost', ]
+        fields = ['name', 'cost', 'filial', 'trainer']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'filial': forms.HiddenInput(),
+            'filial': forms.HiddenInput(),
             'cost': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'trainer': forms.HiddenInput(),
+            'trainer': forms.HiddenInput(),
         }
 
     # def __init__(self, *args, **kwargs):
@@ -359,5 +361,5 @@ class OrderAdmin(forms.ModelForm):
             'size': forms.HiddenInput(),
             'color': forms.HiddenInput(),
             'client': forms.HiddenInput(),
-            'status': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control-sm'}),
         }

@@ -168,8 +168,8 @@ class Timetable(models.Model):
 class Group(models.Model):
     name = models.CharField(max_length=50, verbose_name='Группа')
     cost = models.IntegerField(default=4000, verbose_name='Стоимость')
-    filial = models.ForeignKey('Filial', on_delete=models.PROTECT,null=True, blank=True, verbose_name='Филиал')
-    trainer = models.ForeignKey('Trainers', on_delete=models.PROTECT, verbose_name='Инструктор')
+    filial = models.ForeignKey('Filial', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Филиал')
+    trainer = models.ForeignKey('Trainers', on_delete=models.PROTECT, null=True, blank=True, verbose_name='Инструктор')
 
     class Meta:
         verbose_name = 'Группа'
@@ -196,13 +196,14 @@ class News(models.Model):
     title = models.CharField(max_length=80, verbose_name='Заголовок')
     content = models.TextField(verbose_name='Контент')
     club = models.ForeignKey('Club', blank=True, null=True, on_delete=models.PROTECT,  verbose_name='Клуб')
+    filial = models.ForeignKey('Filial', blank=True, null=True, on_delete=models.PROTECT, verbose_name='Филиал')
     city = models.ForeignKey('City', blank=True, null=True, on_delete=models.PROTECT, verbose_name='Город')
     created_at = models.DateField(auto_now_add=True, verbose_name='Дата публикации')
     # Тип Даты с автоматическим указанием даты и времени
     updated_at = models.DateField(auto_now=True, verbose_name='Обновлено')
     # Тип Даты с автоматическим указанием обновления даты и времени
     photo = models.ImageField(upload_to='photos/%Y/%m/%d/', verbose_name='Изображение', blank=True)
-    author = models.ForeignKey('User', blank=True, null=True, on_delete=models.PROTECT, verbose_name='Автор')
+    author = models.ForeignKey('Trainers', blank=True, null=True, on_delete=models.PROTECT, verbose_name='Автор')
     for_all = models.BooleanField(default=False, verbose_name='Для всех')
 
     def get_absolute_url(self):

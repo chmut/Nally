@@ -60,7 +60,7 @@
                 <td>{{form.name.value}} {{form.name}}</td>
                 <td>{{form.size.value}} {{form.size}}</td>
                 <td>{{form.color.value}} {{form.color}}</td>
-                <td>{{form.status}}</td>
+                <td><div>{{form.status}}</div></td>
                 <td>
                     {%for order in orders%}
                     {%if form.client.value == order.client.id%}
@@ -79,17 +79,7 @@
                 <td><input type="submit" class="btn btn-success" value="Сохранить"></td>
 </form>
 
-<!--            {%for order in orders%}-->
-<!--              <tr>-->
-<!--                <td>{{order.client}}</td>-->
-<!--                <td>{{order.name}}</td>-->
-<!--                <td>{{order.size}}</td>-->
-<!--                <td>{{order.color}}</td>-->
-<!--                <td>{{order.status}}</td>-->
-<!--                  <td>{{order.data}}</td>-->
 
-<!--              </tr>-->
-<!--            {%endfor%}-->
             </tbody>
           </table>
         </div>

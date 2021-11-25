@@ -92,13 +92,10 @@ def profile(request):
 
 @login_required
 def news(request):
-    city = City.objects.get(name=request.user.city)
-    try:
-        club = Club.objects.get(name=request.user.club)
-        news = News.objects.filter(club=club) | News.objects.filter(for_all=True) | News.objects.filter(
-            city=city)
-    except Club.DoesNotExist:
-        news = News.objects.filter(for_all=True)
+    if request.user.job == 'Спортсмен':
+        news = News.objects.filter(club=request.user.club) | News.objects.filter(for_all=True) | News.objects.filter(city=request.user.city) | News.objects.filter(author=request.user.sportsman.group.trainer) | News.objects.filter(filial=request.user.sportsman.filial)
+    else:
+        news = News.objects.filter(club=request.user.club) | News.objects.filter(for_all=True) | News.objects.filter(city=request.user.city) | News.objects.filter(author = request.user.trainer)
     context = {
         # 'news': page_objects,
         'news': news,
@@ -115,12 +112,15 @@ def view_news(request, news_id):
 
 @login_required
 def orders(request):
-    ord = Orders.objects.filter(client_id=request.user)
-    context = {
-        'ord': ord,
-        'title': 'Заказы',
-    }
-    return render(request, 'lk/orders.html', context)
+    if request.user.job == 'Спортсмен':
+        ord = Orders.objects.filter(client_id=request.user)
+        context = {
+            'ord': ord,
+            'title': 'Заказы',
+        }
+        return render(request, 'lk/orders.html', context)
+    else:
+        return redirect('/orders_admin')
 
 
 @login_required
@@ -233,13 +233,9 @@ def stat(request):
 @login_required
 def create_news(request):
     if request.user.trainer.job == 'Тренер':
-        # filial = Filial.objects.filter(title=request.user.filial)
-        # club = Club.objects.filter(name=filial[0].club)
-        club = Club.objects.get(name=request.user.club)
         if request.method == 'POST':
             data = request.POST.copy()
-            data['club'] = Club.objects.get(name=request.user.club)
-            data['city'] = City.objects.get(name=club.city)
+            data['author'] = request.user.trainer
             form = CreateNews(data, request.FILES)
             if form.is_valid():
                 news = News.objects.create(**form.cleaned_data)
@@ -250,11 +246,10 @@ def create_news(request):
             form = CreateNews()
         return render(request, 'lk/create_news.html', {"form": form})
     elif request.user.trainer.job == 'Руководитель клуба':
-        club = Club.objects.get(name=request.user.club)
         if request.method == 'POST':
             data = request.POST.copy()
-            data['club'] = Club.objects.get(name=request.user.club)
-            data['city'] = City.objects.get(name=club.city)
+            data['club'] = request.user.club
+            data['author'] = request.user.trainerpy
             form = CreateNews(data, request.FILES)
             if form.is_valid():
                 news = News.objects.create(**form.cleaned_data)
@@ -267,7 +262,6 @@ def create_news(request):
 
     else:
         return redirect('/news/')
-
 
 
 @login_required
@@ -293,12 +287,11 @@ def create_sportsman(request):
             form = CreateSportsman(data, request.FILES)
             if form.is_valid():
                 sportsman = Sportsman.objects.create(**form.cleaned_data)
+                return redirect(sportsmen)
             else:
                 print(form.errors)
         else:
             form = CreateSportsman(initial={'club': request.user.trainer.club})
-            if form.is_valid():
-                sportsman = Sportsman.objects.create(**form.cleaned_data)
         return render(request, 'lk/create_sportsman.html', {"form": form})
     else:
         return redirect('/')
@@ -348,17 +341,15 @@ class SportsmenUpdate(LoginRequiredMixin, UpdateView):
 @login_required
 def groups(request):
     if request.user.trainer.job == 'Тренер':
-
         groups = Group.objects.filter(trainer=request.user.trainer)
-        filials = Filial.objects.filter(group__trainer=request.user.trainer)
-
+        filials = Filial.objects.filter(group__trainer=request.user.trainer).distinct()
         return render(request, 'lk/groups.html', {"groups": groups, "filials":filials})
     elif request.user.trainer.job == 'Руководитель клуба':
         groups = Group.objects.filter(filial__club__exact=request.user.trainer.club)
         filials = Filial.objects.filter(club=request.user.trainer.club)
         return render(request, 'lk/groups.html', {"groups": groups, "filials":filials})
     else:
-        return redirect('profile')
+        return redirect('/')
 
 
 @login_required
@@ -367,6 +358,11 @@ def filials(request, filial_id):
         filial = Filial.objects.get(pk=filial_id)
         groups = Group.objects.filter(filial=filial)
         filials = Filial.objects.filter(club=request.user.club)
+        return render(request, 'lk/filial.html', {"groups": groups, "filials":filials, "filial":filial})
+    elif request.user.trainer.job == 'Тренер':
+        filial = Filial.objects.get(pk=filial_id)
+        groups = Group.objects.filter(filial=filial, trainer=request.user.trainer)
+        filials = Filial.objects.filter(group__trainer=request.user.trainer).distinct()
         return render(request, 'lk/filial.html', {"groups": groups, "filials":filials, "filial":filial})
     else:
         return redirect('/')
@@ -403,8 +399,7 @@ def create_group(request, filial_id):
                 print(form.errors)
         else:
             data = request.POST.copy()
-            data['filial'] = Filial.objects.get(name=request.user.trainer.filial)
-            data['trainer'] = request.user.trainer
+            data['filial'] = Filial.objects.get(id=filial_id)
             form = GroupForm(data, request.FILES)
             if form.is_valid():
                 group = Group.objects.create(**form.cleaned_data)
@@ -470,7 +465,7 @@ def create_statistic(request):
 
         return render(request, 'lk/statistic_admin.html', context)
     else:
-        return redirect('profile')
+        return redirect('/')
 
 
 def get_group_stat(request, group_id):
@@ -524,7 +519,7 @@ def get_group_stat(request, group_id):
 
         return render(request, 'lk/statistic_group.html', context)
     else:
-        return redirect('profile')
+        return redirect('/')
 
 
 @login_required
@@ -536,7 +531,7 @@ def cert_active(request):
         cert = Certificates.objects.filter(person__club__exact=request.user.club, status=1)
         return render(request, 'lk/cert_active.html', {"cert": cert,})
     else:
-        return redirect('profile')
+        return redirect('/')
 
 
 @login_required
@@ -548,7 +543,7 @@ def cert_all(request):
         cert = Certificates.objects.filter(person__club__exact=request.user.club)
         return render(request, 'lk/cert_all.html', {"cert": cert,})
     else:
-        return redirect('profile')
+        return redirect('/')
 
 
 class CertUpdate(LoginRequiredMixin, UpdateView):
@@ -596,7 +591,7 @@ def personal(request):
         trainers = Trainers.objects.filter(club=request.user.trainer.club)
         return render(request, 'lk/personal.html', {"trainers": trainers,})
     else:
-        redirect('profile')
+        redirect('/')
 
 
 def personal_trainers(request):
@@ -604,7 +599,7 @@ def personal_trainers(request):
         trainers = Trainers.objects.filter(club=request.user.trainer.club, job='Тренер')
         return render(request, 'lk/personal.html', {"trainers": trainers,})
     else:
-        redirect('profile')
+        redirect('/')
 
 
 def personal_admins(request):
@@ -612,7 +607,7 @@ def personal_admins(request):
         trainers = Trainers.objects.filter(club=request.user.trainer.club, job='Администратор филиала')
         return render(request, 'lk/personal.html', {"trainers": trainers,})
     else:
-        redirect('profile')
+        redirect('/')
 
 
 def create_personal(request):
